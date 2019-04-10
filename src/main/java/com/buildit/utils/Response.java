@@ -1,4 +1,4 @@
-package com.buildit.serverless;
+package com.buildit.utils;
 
 import java.util.Map;
 
