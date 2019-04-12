@@ -1,35 +1,37 @@
-package com.buildit.survey;
+package com.buildit.question;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.buildit.utils.ApiGatewayResponse;
 import com.buildit.utils.Response;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.List;
 import java.util.Map;
 
-public class SaveSurveyHandler implements RequestHandler<Map<String, Object>, ApiGatewayResponse> {
+public class SaveQuestionsHandler implements RequestHandler<Map<String, Object>, ApiGatewayResponse> {
 
-    private final static Logger LOGGER = LogManager.getLogger(SaveSurveyHandler.class);
+    private final static Logger LOGGER = LogManager.getLogger(SaveQuestionsHandler.class);
 
     @Override
     public ApiGatewayResponse handleRequest(Map<String, Object> input, Context context) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             String body = (String) input.get("body");
-            Survey survey = objectMapper.readValue(body, Survey.class);
+            List<Question> questions = objectMapper.readValue(body, new TypeReference<List<Question>>() {});
 
-            new SurveyService().save(survey);
+            new QuestionService().saveQuestions(questions);
 
             return ApiGatewayResponse.builder()
                     .setStatusCode(200)
-                    .setObjectBody(survey)
+                    .setObjectBody(questions)
                     .build();
         } catch (Exception ex) {
-            LOGGER.error("Error in saving survey: " + ex);
-            Response responseBody = new Response("Error in saving survey: ", input);
+            LOGGER.error("Error in saving questions: " + ex);
+            Response responseBody = new Response("Error in saving questions: ", input);
 
             return ApiGatewayResponse.builder()
                     .setStatusCode(500)

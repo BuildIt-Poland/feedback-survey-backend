@@ -6,8 +6,10 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 
 import java.util.List;
 
-@DynamoDBTable(tableName = "feedback_survey")
+@DynamoDBTable(tableName = "PLACEHOLDER_SURVEY_TABLE_NAME")
 public class Survey {
+
+    static final String SURVEY_TABLE_NAME = System.getenv("SURVEY_TABLE_NAME");
 
     private String id;
 

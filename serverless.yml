@@ -1,5 +1,10 @@
 service: feedback-survey
 
+custom:
+  surveyTableName: 'feedback_survey-${self:provider.stage}'
+  questionTableName: 'feedback_question-${self:provider.stage}'
+  questionTypeTableName: 'feedback_question-type-${self:provider.stage}'
+
 provider:
   name: aws
   runtime: java8
@@ -16,15 +21,20 @@ provider:
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
       Resource:
-        Fn::GetAtt:
-          - surveyTable
-          - Arn
+        - { "Fn::GetAtt": ["surveyTable", "Arn"] }
+        - { "Fn::GetAtt": ["questionTable", "Arn"] }
+        - { "Fn::GetAtt": ["questionTypeTable", "Arn"] }
+  environment:
+    SURVEY_TABLE_NAME: ${self:custom.surveyTableName}
+    QUESTION_TABLE_NAME: ${self:custom.questionTableName}
+    QUESTION_TYPE_TABLE_NAME: ${self:custom.questionTypeTableName}
+
 
 package:
   artifact: target/feedback-survey-SNAPSHOT-1.jar
 
 functions:
-  hello:
+  exportSurvey:
     handler: com.buildit.survey.ExportSurveyHandler
     events:
       - http:
@@ -38,17 +48,66 @@ functions:
           path: /saveSurvey
           method: post
 
+  getQuestions:
+    handler: com.buildit.question.GetQuestionsHandler
+    events:
+      - http:
+          path: /getQuestions
+          method: get
+
+  saveQuestions:
+    handler: com.buildit.question.SaveQuestionsHandler
+    events:
+      - http:
+          path: /saveQuestions
+          method: post
+
+  saveQuestionTypes:
+    handler: com.buildit.question.SaveQuestionTypesHandler
+    events:
+      - http:
+          path: /saveQuestionTypes
+          method: post
+
 resources:
   Resources:
     surveyTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: feedback_survey
+        TableName: ${self:custom.surveyTableName}
         AttributeDefinitions:
           - AttributeName: id
             AttributeType: S
         KeySchema:
           - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+
+    questionTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.questionTableName}
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+
+    questionTypeTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.questionTypeTableName}
+        AttributeDefinitions:
+          - AttributeName: type
+            AttributeType: S
+        KeySchema:
+          - AttributeName: type
             KeyType: HASH
         ProvisionedThroughput:
           ReadCapacityUnits: 1
