@@ -6,11 +6,11 @@ class Questions {
 
     private List<Question> questions;
 
-    private List<QuestionType> questionTypes;
+    private List<AnswerType> answerTypes;
 
-    Questions(List<Question> questions, List<QuestionType> questionTypes) {
+    Questions(List<Question> questions, List<AnswerType> answerTypes) {
         this.questions = questions;
-        this.questionTypes = questionTypes;
+        this.answerTypes = answerTypes;
     }
 
     public List<Question> getQuestions() {
@@ -21,11 +21,11 @@ class Questions {
         this.questions = questions;
     }
 
-    public List<QuestionType> getQuestionTypes() {
-        return questionTypes;
+    public List<AnswerType> getAnswerTypes() {
+        return answerTypes;
     }
 
-    public void setQuestionTypes(List<QuestionType> questionTypes) {
-        this.questionTypes = questionTypes;
+    public void setAnswerTypes(List<AnswerType> answerTypes) {
+        this.answerTypes = answerTypes;
     }
 }

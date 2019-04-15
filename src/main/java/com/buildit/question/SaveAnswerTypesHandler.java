@@ -12,26 +12,26 @@ import org.apache.logging.log4j.Logger;
 import java.util.List;
 import java.util.Map;
 
-public class SaveQuestionTypesHandler implements RequestHandler<Map<String, Object>, ApiGatewayResponse> {
+public class SaveAnswerTypesHandler implements RequestHandler<Map<String, Object>, ApiGatewayResponse> {
 
-    private final static Logger LOGGER = LogManager.getLogger(SaveQuestionTypesHandler.class);
+    private final static Logger LOGGER = LogManager.getLogger(SaveAnswerTypesHandler.class);
 
     @Override
     public ApiGatewayResponse handleRequest(Map<String, Object> input, Context context) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             String body = (String) input.get("body");
-            List<QuestionType> questions = objectMapper.readValue(body, new TypeReference<List<QuestionType>>(){});
+            List<AnswerType> questions = objectMapper.readValue(body, new TypeReference<List<AnswerType>>(){});
 
-            new QuestionService().saveQuestionTypes(questions);
+            new QuestionService().saveAnswerTypes(questions);
 
             return ApiGatewayResponse.builder()
                     .setStatusCode(200)
                     .setObjectBody(questions)
                     .build();
         } catch (Exception ex) {
-            LOGGER.error("Error in saving question types: " + ex);
-            Response responseBody = new Response("Error in saving question types: ", input);
+            LOGGER.error("Error in saving answer types: " + ex);
+            Response responseBody = new Response("Error in saving answer types: ", input);
 
             return ApiGatewayResponse.builder()
                     .setStatusCode(500)

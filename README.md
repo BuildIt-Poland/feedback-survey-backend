@@ -55,5 +55,5 @@ curl -d '{"clientName": "Joanna", "answers":["answer1", "answer2"]}' -H "Content
 
 Save dictionary values:
 ```
-curl -d '[{"type":"kindOfFeedback","values":["monthly","quarterly","annual"]},{"type":"yesNo","values":["Yes","No"]},{"type":"rating","values":["Bad","Average","Good","Excellent"]}]' -H "Content-Type: application/json" -X POST https://address.execute-api.us-east-1.amazonaws.com/dev/saveQuestionTypes
+curl -d '[{"type":"kindOfFeedback","values":["monthly","quarterly","annual"]},{"type":"yesNo","values":["Yes","No"]},{"type":"rating","values":["Bad","Average","Good","Excellent"]}]' -H "Content-Type: application/json" -X POST https://address.execute-api.us-east-1.amazonaws.com/dev/saveAnswerTypes
 ```

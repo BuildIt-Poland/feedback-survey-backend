@@ -16,6 +16,10 @@ public class Question {
 
     private boolean required;
 
+    private String name;
+
+    private String answerType;
+
     @DynamoDBHashKey
     public String getId() {
         return id;
@@ -47,5 +51,21 @@ public class Question {
 
     public void setRequired(boolean required) {
         this.required = required;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getAnswerType() {
+        return answerType;
+    }
+
+    public void setAnswerType(String answerType) {
+        this.answerType = answerType;
     }
 }

@@ -5,10 +5,10 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 
 import java.util.List;
 
-@DynamoDBTable(tableName = "PLACEHOLDER_QUESTION_TYPE_TABLE_NAME")
-public class QuestionType {
+@DynamoDBTable(tableName = "PLACEHOLDER_ANSWER_TYPE_TABLE_NAME")
+public class AnswerType {
 
-    static final String QUESTION_TYPE_TABLE_NAME = System.getenv("QUESTION_TYPE_TABLE_NAME");
+    static final String ANSWER_TYPE_TABLE_NAME = System.getenv("ANSWER_TYPE_TABLE_NAME");
 
     private String type;
 
@@ -33,7 +33,7 @@ public class QuestionType {
 
     @Override
     public String toString() {
-        return "QuestionType{" +
+        return "AnswerType{" +
                 "type='" + type + '\'' +
                 ", values=" + values +
                 '}';

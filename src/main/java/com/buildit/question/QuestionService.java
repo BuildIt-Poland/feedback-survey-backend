@@ -14,9 +14,9 @@ class QuestionService {
     Questions getAllQuestions() {
         DynamoDBScanExpression scanExp = new DynamoDBScanExpression();
         List<Question> questions = getQuestions(scanExp);
-        List<QuestionType> questionTypes = getQuestionTypes(scanExp);
+        List<AnswerType> answerTypes = getAnswerTypes(scanExp);
 
-        return new Questions(questions, questionTypes);
+        return new Questions(questions, answerTypes);
     }
 
     private List<Question> getQuestions(DynamoDBScanExpression scanExp) {
@@ -24,14 +24,14 @@ class QuestionService {
         return mapper.scan(Question.class, scanExp);
     }
 
-    private List<QuestionType> getQuestionTypes(DynamoDBScanExpression scanExp) {
-        DynamoDBMapper mapper = new TableMapper(QuestionType.QUESTION_TYPE_TABLE_NAME).getDynamoDBMapper();
-        return mapper.scan(QuestionType.class, scanExp);
+    private List<AnswerType> getAnswerTypes(DynamoDBScanExpression scanExp) {
+        DynamoDBMapper mapper = new TableMapper(AnswerType.ANSWER_TYPE_TABLE_NAME).getDynamoDBMapper();
+        return mapper.scan(AnswerType.class, scanExp);
     }
 
-    void saveQuestionTypes(List<QuestionType> questionTypes) {
-        DynamoDBMapper mapper = new TableMapper(QuestionType.QUESTION_TYPE_TABLE_NAME).getDynamoDBMapper();
-        questionTypes.forEach(mapper::save);
+    void saveAnswerTypes(List<AnswerType> answerTypes) {
+        DynamoDBMapper mapper = new TableMapper(AnswerType.ANSWER_TYPE_TABLE_NAME).getDynamoDBMapper();
+        answerTypes.forEach(mapper::save);
     }
 
     void saveQuestions(List<Question> questions) {
