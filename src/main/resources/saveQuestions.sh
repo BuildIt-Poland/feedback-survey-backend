@@ -43,7 +43,7 @@ curl -d '[{
                 {
                   "id": "8",
                   "type": "rating",
-                  "content": "How would you rate overall performance of this individual?",
+                  "content": "How would you rate overall performance of this individual in their current role?",
                   "required": true,
                   "name": "overall-performance",
                   "answerType": "rating"
@@ -51,7 +51,7 @@ curl -d '[{
                 {
                   "id": "9",
                   "type": "rating",
-                  "content": "Based on the role this individual performing in your organisation how satisfied are you that their performing their role to their best abilities?",
+                  "content": "Based on the role this individual is performing in your organisation, how satisfied are you that they are performing to the best of their abilities?",
                   "required": true,
                   "name": "satisfied",
                   "answerType": "rating"
@@ -59,7 +59,7 @@ curl -d '[{
                 {
                   "id": "10",
                   "type": "rating",
-                  "content": "How would you rate individual contribution to your team, the company or to your customer?",
+                  "content": "How would you rate their contribution to your team, the company or to your customer?",
                   "required": true,
                   "name": "contribution",
                   "answerType": "rating"
@@ -67,7 +67,7 @@ curl -d '[{
                 {
                   "id": "11",
                   "type": "rating",
-                  "content": "Given what you know of this person’s performance, would you want this individual always on you team?",
+                  "content": "Given what you know of this person’s performance, how likely would you look to retain them longer term?",
                   "required": true,
                   "name": "performance",
                   "answerType": "rating"
