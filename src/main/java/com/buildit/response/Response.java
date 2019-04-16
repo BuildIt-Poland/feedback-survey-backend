@@ -1,4 +1,4 @@
-package com.buildit.utils;
+package com.buildit.response;
 
 import java.util.Map;
 

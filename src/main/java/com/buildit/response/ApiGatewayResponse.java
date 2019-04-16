@@ -1,4 +1,4 @@
-package com.buildit.utils;
+package com.buildit.response;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -21,7 +21,7 @@ public class ApiGatewayResponse {
 	public ApiGatewayResponse(int statusCode, String body, Map<String, String> headers, boolean isBase64Encoded) {
 		this.statusCode = statusCode;
 		this.body = body;
-		this.headers = headers;
+		this.headers = Collections.singletonMap("Access-Control-Allow-Origin", "*");
 		this.isBase64Encoded = isBase64Encoded;
 	}
 
