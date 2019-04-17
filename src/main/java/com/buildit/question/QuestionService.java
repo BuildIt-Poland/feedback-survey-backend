@@ -2,9 +2,12 @@ package com.buildit.question;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
+import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedList;
 import com.buildit.dynamoDB.TableMapper;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 class QuestionService {
 
@@ -21,7 +24,10 @@ class QuestionService {
 
     private List<Question> getQuestions(DynamoDBScanExpression scanExp) {
         DynamoDBMapper mapper = new TableMapper(Question.QUESTION_TABLE_NAME).getDynamoDBMapper();
-        return mapper.scan(Question.class, scanExp);
+        PaginatedList<Question> questions = mapper.scan(Question.class, scanExp);
+        return questions.stream()
+                .sorted(Comparator.comparing(Question::getOrdinal))
+                .collect(Collectors.toList());
     }
 
     private List<AnswerType> getAnswerTypes(DynamoDBScanExpression scanExp) {

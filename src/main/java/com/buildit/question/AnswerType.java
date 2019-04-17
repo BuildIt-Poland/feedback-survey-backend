@@ -14,7 +14,7 @@ public class AnswerType {
 
     private List<String> values;
 
-    @DynamoDBHashKey(attributeName = "type")
+    @DynamoDBHashKey
     public String getType() {
         return type;
     }

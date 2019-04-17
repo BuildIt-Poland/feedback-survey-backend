@@ -50,7 +50,7 @@ https://serverless.com/blog/how-to-create-a-rest-api-in-java-using-dynamodb-and-
 
 Save survey:
 ```
-curl -d '{“userName”: “Joanna”, “answers”:[{“questionId”: “1”, “answer”: “answer123”}]}'' -H "Content-Type: application/json" -X POST https://address.execute-api.us-east-1.amazonaws.com/dev/saveSurvey
+curl -d '{"surveyId": "12345", "answers":[{"questionId": "1", "answer": "answer123"}]}' -H "Content-Type: application/json" -X POST https://address.execute-api.us-east-1.amazonaws.com/dev/saveSurvey
 ```
 
 Save dictionary values:
