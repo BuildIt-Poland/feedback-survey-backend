@@ -52,8 +52,3 @@ Save survey:
 ```
 curl -d '{"surveyId": "12345", "answers":[{"questionId": "1", "answer": "answer123"}]}' -H "Content-Type: application/json" -X POST https://address.execute-api.us-east-1.amazonaws.com/dev/saveSurvey
 ```
-
-Save dictionary values:
-```
-curl -d '[{"type":"kindOfFeedback","values":["monthly","quarterly","annual"]},{"type":"yesNo","values":["Yes","No"]},{"type":"rating","values":["Bad","Average","Good","Excellent"]}]' -H "Content-Type: application/json" -X POST https://address.execute-api.us-east-1.amazonaws.com/dev/saveAnswerTypes
-```

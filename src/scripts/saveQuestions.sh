@@ -1,5 +1,7 @@
 #! /bin/bash
 
+ADDRESS="https://------.execute-api.us-east-1.amazonaws.com/prod"
+
 curl -d '[{
                   "id": "1",
                   "ordinal": 1,
@@ -107,5 +109,5 @@ curl -d '[{
                   "required": false,
                   "name": "additional-information",
                   "answerType": null
-                }]' -H "Content-Type: application/json" -X POST https://address.execute-api.us-east-1.amazonaws.com/dev/saveQuestions
+                }]' -H "Content-Type: application/json" -X POST $ADDRESS/saveQuestions
 
