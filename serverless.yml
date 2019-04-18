@@ -47,6 +47,7 @@ functions:
       - http:
           path: /saveSurvey
           method: post
+          cors: true
 
   getQuestions:
     handler: com.buildit.question.GetQuestionsHandler
@@ -54,6 +55,7 @@ functions:
       - http:
           path: /getQuestions
           method: get
+          cors: true
 
   saveQuestions:
     handler: com.buildit.question.SaveQuestionsHandler
