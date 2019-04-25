@@ -1,0 +1,49 @@
+service: feedback-survey-export
+
+plugins:
+  - serverless-apigwy-binary
+
+custom:
+  surveyTableName: 'feedback_survey-${self:provider.stage}'
+  questionTableName: 'feedback_question-${self:provider.stage}'
+  answerTypeTableName: 'feedback_answer-type-${self:provider.stage}'
+
+  apigwBinary:
+    types:
+      - '*/*'
+
+provider:
+  name: aws
+  runtime: java8
+  stage: dev
+  region: us-east-1
+
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource:
+        - "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.SURVEY_TABLE_NAME}"
+        - "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.QUESTION_TABLE_NAME}"
+        - "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.ANSWER_TYPE_TABLE_NAME}"
+  environment:
+    SURVEY_TABLE_NAME: ${self:custom.surveyTableName}
+    QUESTION_TABLE_NAME: ${self:custom.questionTableName}
+    ANSWER_TYPE_TABLE_NAME: ${self:custom.answerTypeTableName}
+
+package:
+  artifact: ../target/feedback-survey-SNAPSHOT-1.jar
+
+functions:
+  exportSurvey:
+    handler: com.buildit.survey.ExportSurveysHandler
+    events:
+      - http:
+          path: /exportSurveys
+          method: get
+          cors: true

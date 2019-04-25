@@ -28,14 +28,25 @@ Other:
     mvn --version
     ```
     
+3. Plugin for binary files
+    ```
+    npm install --save-dev serverless-apigw-binary
+    ```
+    Source: https://github.com/maciejtreder/serverless-apigw-binary
+    
 # Build and deploy
 If you in the project directory
 1. Build project
     ```
     mvn clean install
     ```
-2. Deploy the Service
+2. Deploy the Service 'feedback-survey'
     ```
+    sls deploy
+    ```
+3. Deploy Service 'feedback-survey-export'. The service is separate, because I defined other gateway API, which support binary files
+    ```
+    cd export
     sls deploy
     ```
 

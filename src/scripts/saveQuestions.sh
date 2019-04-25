@@ -2,25 +2,7 @@
 
 ADDRESS="https://------.execute-api.us-east-1.amazonaws.com/prod"
 
-curl -d '[{
-                  "id": "1",
-                  "ordinal": 1,
-                  "type": "open-ended", 
-		          "content": "Current Role",
-                  "required": true,
-                  "name": "current-role",
-                  "answerType": null
-                },
-                {
-                  "id": "3",
-                  "ordinal": 3,
-                  "type": "open-ended",
-                  "content": "Your Name",
-                  "required": true,
-                  "name": "name",
-                  "answerType": null
-                },
-                {
+curl -d '[       {
                   "id": "4",
                   "ordinal": 4,
                   "type": "select",

@@ -34,13 +34,6 @@ package:
   artifact: target/feedback-survey-SNAPSHOT-1.jar
 
 functions:
-  exportSurvey:
-    handler: com.buildit.survey.ExportSurveyHandler
-    events:
-      - http:
-          path: /exportSurvey
-          method: get
-
   saveSurvey:
     handler: com.buildit.survey.SaveSurveyHandler
     events:
