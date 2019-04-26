@@ -2,11 +2,19 @@ service: feedback-survey-export
 
 plugins:
   - serverless-apigwy-binary
+  - serverless-domain-manager
 
 custom:
   surveyTableName: 'feedback_survey-${self:provider.stage}'
   questionTableName: 'feedback_question-${self:provider.stage}'
   answerTypeTableName: 'feedback_answer-type-${self:provider.stage}'
+
+
+  customDomain:
+    domainName: 'feedback-survey-${self:provider.stage}.buildit.digital'
+    basePath: 'export'
+    stage: ${self:provider.stage}
+    createRoute53Record: true
 
   apigwBinary:
     types:

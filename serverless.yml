@@ -1,9 +1,18 @@
 service: feedback-survey
 
+plugins:
+  - serverless-domain-manager
+
 custom:
   surveyTableName: 'feedback_survey-${self:provider.stage}'
   questionTableName: 'feedback_question-${self:provider.stage}'
   answerTypeTableName: 'feedback_answer-type-${self:provider.stage}'
+
+  customDomain:
+    domainName: 'feedback-survey-${self:provider.stage}.buildit.digital'
+    basePath: 'api'
+    stage: ${self:provider.stage}
+    createRoute53Record: true
 
 provider:
   name: aws

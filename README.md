@@ -34,6 +34,12 @@ Other:
     ```
     Source: https://github.com/maciejtreder/serverless-apigw-binary
     
+4. Plugin for create domain
+    ```
+    npm install serverless-domain-manager --save-dev
+    ```
+    Source: https://github.com/amplify-education/serverless-domain-manager
+    
 # Build and deploy
 If you in the project directory
 1. Build project
