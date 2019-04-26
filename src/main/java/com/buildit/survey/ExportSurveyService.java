@@ -2,6 +2,7 @@ package com.buildit.survey;
 
 import com.buildit.question.Question;
 import com.buildit.question.QuestionService;
+import com.buildit.utils.LocalDateTimeFormatter;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.logging.log4j.LogManager;
@@ -11,9 +12,12 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 class ExportSurveyService {
 
@@ -44,15 +48,9 @@ class ExportSurveyService {
 
         surveys.forEach(
                 survey -> {
-                    Map<String, String> answerForQuestion = survey.getAnswers().stream()
-                            .collect(Collectors.toMap(Answer::getQuestionId, Answer::getAnswer));
-
-                    List<String> answers = questions.stream()
-                            .map(question -> answerForQuestion.get(question.getId()))
-                            .collect(Collectors.toList());
-
+                    List<String> record = prepareRecord(survey, questions);
                     try {
-                        printer.printRecord(answers);
+                        printer.printRecord(record);
                     } catch (IOException e) {
                         LOGGER.error("Error in exporting surveys to csv " + e);
                     }
@@ -63,9 +61,28 @@ class ExportSurveyService {
     }
 
     private String[] prepareHeaders(List<Question> questions) {
-        return questions.stream()
-                .map(Question::getContent)
+        Stream<String> constantHeaders = Stream.of("Id", "Date");
+        Stream<String> questionsContent = questions.stream().map(Question::getContent);
+        return Stream.concat(constantHeaders, questionsContent)
                 .toArray(String[]::new);
+    }
+
+    private List<String> prepareRecord(Survey survey, List<Question> questions) {
+        List<String> record = new ArrayList<>(Arrays.asList(
+                survey.getSurveyId(),
+                LocalDateTimeFormatter.parseDate(survey.getSavedDate())
+        ));
+        record.addAll(getAnswers(survey, questions));
+        return record;
+    }
+
+    private List<String> getAnswers(Survey survey, List<Question> questions) {
+        Map<String, String> answerForQuestion = survey.getAnswers().stream()
+                .collect(Collectors.toMap(Answer::getQuestionId, Answer::getAnswer));
+
+        return questions.stream()
+                .map(question -> answerForQuestion.get(question.getId()))
+                .collect(Collectors.toList());
     }
 
 }

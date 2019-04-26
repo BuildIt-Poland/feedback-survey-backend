@@ -13,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.*;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -83,7 +84,12 @@ class ExportSurveyServiceTest {
                 .parse(in);
 
         for (CSVRecord record : records) {
-            assertEquals(3, record.size());
+            assertEquals(5, record.size());
+            assertEquals("surveyId", record.get("Id"));
+            assertEquals("2019-04-22 11:22:33", record.get("Date"));
+            assertEquals("answer 1", record.get("Question 1"));
+            assertEquals("answer 2", record.get("Question 2"));
+            assertEquals("answer 3", record.get("Question 3"));
         }
     }
 
@@ -98,6 +104,8 @@ class ExportSurveyServiceTest {
     private Survey createSurvey() {
         List<Answer> answers = Arrays.asList(createAnswer("1"), createAnswer("2"), createAnswer("3"));
         Survey survey = new Survey();
+        survey.setSurveyId("surveyId");
+        survey.setSavedDate(LocalDateTime.of(2019, 4, 22, 11, 22, 33, 44));
         survey.setAnswers(answers);
         return survey;
     }
