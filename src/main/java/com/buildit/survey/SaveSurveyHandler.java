@@ -2,6 +2,7 @@ package com.buildit.survey;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
+import com.buildit.dynamoDB.TableMapper;
 import com.buildit.response.ApiGatewayResponse;
 import com.buildit.response.Response;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,7 +22,8 @@ public class SaveSurveyHandler implements RequestHandler<Map<String, Object>, Ap
             String body = (String) input.get("body");
             Survey survey = objectMapper.readValue(body, Survey.class);
 
-            new SurveyService().save(survey);
+            SurveyDao surveyDao = new SurveyDao(new TableMapper());
+            surveyDao.save(survey);
 
             return ApiGatewayResponse.builder()
                     .setStatusCode(200)

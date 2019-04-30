@@ -1,7 +1,7 @@
 package com.buildit.survey;
 
 import com.buildit.question.Question;
-import com.buildit.question.QuestionService;
+import com.buildit.question.QuestionDao;
 import com.buildit.utils.LocalDateTimeFormatter;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
@@ -23,17 +23,17 @@ class ExportSurveyService {
 
     private final static Logger LOGGER = LogManager.getLogger(ExportSurveyService.class);
 
-    private final QuestionService questionService;
+    private final QuestionDao questionDao;
 
-    private final SurveyService surveyService;
+    private final SurveyDao surveyService;
 
-    public ExportSurveyService(QuestionService questionService, SurveyService surveyService) {
-        this.questionService = questionService;
-        this.surveyService = surveyService;
+    ExportSurveyService(QuestionDao questionDao, SurveyDao surveyDao) {
+        this.questionDao = questionDao;
+        this.surveyService = surveyDao;
     }
 
     byte[] exportToCSVFile() throws IOException {
-        File file = generateCSVFile(surveyService.getAll(), questionService.getQuestions());
+        File file = generateCSVFile(surveyService.getAll(), questionDao.getQuestions());
         return Files.readAllBytes(file.toPath());
     }
 

@@ -1,7 +1,7 @@
 package com.buildit.survey;
 
 import com.buildit.question.Question;
-import com.buildit.question.QuestionService;
+import com.buildit.question.QuestionDao;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.junit.jupiter.api.Test;
@@ -27,10 +27,10 @@ import static org.mockito.Mockito.when;
 class ExportSurveyServiceTest {
 
     @Mock
-    private QuestionService questionService;
+    private QuestionDao questionDao;
 
     @Mock
-    private SurveyService surveyService;
+    private SurveyDao surveyDao;
 
     @InjectMocks
     private ExportSurveyService testee;
@@ -56,14 +56,14 @@ class ExportSurveyServiceTest {
         List<Question> questions = Arrays.asList(createQuestion(1L), createQuestion(2L), createQuestion(3L));
 
         //WHEN
-        when(questionService.getQuestions()).thenReturn(questions);
-        when(surveyService.getAll()).thenReturn(surveys);
+        when(questionDao.getQuestions()).thenReturn(questions);
+        when(surveyDao.getAll()).thenReturn(surveys);
 
         byte[] fileContent = testee.exportToCSVFile();
 
         //THEN
-        verify(questionService).getQuestions();
-        verify(surveyService).getAll();
+        verify(questionDao).getQuestions();
+        verify(surveyDao).getAll();
 
         File file = createFile(fileContent);
         verifyFileContent(file);

@@ -42,15 +42,19 @@ Other:
     
 # Build and deploy
 If you in the project directory
-1. Build project
+1. Create custom domain (domain is defined in serverless.yml):
+    ```
+    serverless create_domain
+    ```
+2. Build project:
     ```
     mvn clean install
     ```
-2. Deploy the Service 'feedback-survey'
+3. Deploy the Service 'feedback-survey':
     ```
     sls deploy
     ```
-3. Deploy Service 'feedback-survey-export'. The service is separate, because I defined other gateway API, which support binary files
+4. Deploy Service 'feedback-survey-export'. The service is separate, because I defined other gateway API, which support binary files.
     ```
     cd export
     sls deploy

@@ -2,6 +2,7 @@ package com.buildit.question;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
+import com.buildit.dynamoDB.TableMapper;
 import com.buildit.response.ApiGatewayResponse;
 import com.buildit.response.Response;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -23,7 +24,8 @@ public class SaveAnswerTypesHandler implements RequestHandler<Map<String, Object
             String body = (String) input.get("body");
             List<AnswerType> questions = objectMapper.readValue(body, new TypeReference<List<AnswerType>>(){});
 
-            new QuestionService().saveAnswerTypes(questions);
+            QuestionDao questionDao = new QuestionDao(new TableMapper());
+            questionDao.saveAnswerTypes(questions);
 
             return ApiGatewayResponse.builder()
                     .setStatusCode(200)

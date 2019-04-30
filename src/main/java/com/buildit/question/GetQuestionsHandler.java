@@ -2,6 +2,7 @@ package com.buildit.question;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
+import com.buildit.dynamoDB.TableMapper;
 import com.buildit.response.ApiGatewayResponse;
 import com.buildit.response.Response;
 import org.apache.logging.log4j.LogManager;
@@ -16,7 +17,8 @@ public class GetQuestionsHandler implements RequestHandler<Map<String, Object>, 
     @Override
     public ApiGatewayResponse handleRequest(Map<String, Object> input, Context context) {
         try {
-            Questions questions = new QuestionService().getAllQuestions();
+            QuestionDao questionDao = new QuestionDao(new TableMapper());
+            Questions questions = questionDao.getAllQuestions();
 
             return ApiGatewayResponse.builder()
                     .setStatusCode(200)

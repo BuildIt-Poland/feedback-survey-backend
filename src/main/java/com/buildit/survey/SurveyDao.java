@@ -7,16 +7,22 @@ import com.buildit.dynamoDB.TableMapper;
 import java.time.LocalDateTime;
 import java.util.List;
 
-class SurveyService {
+class SurveyDao {
+
+    private final TableMapper tableMapper;
+
+    SurveyDao(TableMapper tableMapper) {
+        this.tableMapper = tableMapper;
+    }
 
     void save(Survey survey) {
-        DynamoDBMapper mapper = new TableMapper(Survey.SURVEY_TABLE_NAME).getDynamoDBMapper();
+        DynamoDBMapper mapper = tableMapper.getDynamoDBMapper(Survey.SURVEY_TABLE_NAME);
         survey.setSavedDate(LocalDateTime.now());
         mapper.save(survey);
     }
 
     List<Survey> getAll() {
-        DynamoDBMapper mapper = new TableMapper(Survey.SURVEY_TABLE_NAME).getDynamoDBMapper();
+        DynamoDBMapper mapper = tableMapper.getDynamoDBMapper(Survey.SURVEY_TABLE_NAME);
         DynamoDBScanExpression scanExp = new DynamoDBScanExpression();
         return mapper.scan(Survey.class, scanExp);
     }
