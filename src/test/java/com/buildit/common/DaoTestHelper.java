@@ -1,7 +1,6 @@
 package com.buildit.common;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
 import com.amazonaws.services.dynamodbv2.local.shared.access.AmazonDynamoDBLocal;
 import com.amazonaws.services.dynamodbv2.model.CreateTableRequest;
 import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
@@ -13,10 +12,7 @@ public class DaoTestHelper {
     }
 
     public static DynamoDBMapper getDBMapper(AmazonDynamoDBLocal amazonDynamoDBLocal, String tableName) {
-        DynamoDBMapperConfig mapperConfig = DynamoDBMapperConfig.builder()
-                .withTableNameOverride(new DynamoDBMapperConfig.TableNameOverride(tableName))
-                .build();
-        return new DynamoDBMapper(amazonDynamoDBLocal.amazonDynamoDB(), mapperConfig);
+        return new TableMapperMock(amazonDynamoDBLocal).getDynamoDBMapper(tableName);
     }
 
     public static void createTable(AmazonDynamoDBLocal amazonDynamoDBLocal, DynamoDBMapper dynamoDBMapper, Class<?> clazz) {

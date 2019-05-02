@@ -17,7 +17,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -60,15 +59,15 @@ class QuestionDaoTest {
     @Test
     void getAllQuestions() {
         //WHEN
-        questionDynamoDBMapper.save(prepareQuestion());
-        answerTypeDynamoDBMapper.save(prepareAnswerType());
+        questionDynamoDBMapper.save(new QuestionTestData().prepareQuestion());
+        answerTypeDynamoDBMapper.save(new QuestionTestData().prepareAnswerType());
         when(tableMapper.getDynamoDBMapper(Question.QUESTION_TABLE_NAME)).thenReturn(questionDynamoDBMapper);
         when(tableMapper.getDynamoDBMapper(AnswerType.ANSWER_TYPE_TABLE_NAME)).thenReturn(answerTypeDynamoDBMapper);
 
         Questions questions = questionDao.getAllQuestions();
 
         //THEN
-        verify(tableMapper, times(2)).getDynamoDBMapper(Question.QUESTION_TABLE_NAME);
+        verify(tableMapper, times(2)).getDynamoDBMapper(any());
         assertEquals(1, questions.getQuestions().size());
         assertEquals(1, questions.getAnswerTypes().size());
     }
@@ -76,7 +75,7 @@ class QuestionDaoTest {
     @Test
     void getQuestions() {
         //GIVEN
-        Question question = prepareQuestion();
+        Question question = new QuestionTestData().prepareQuestion();
 
         //WHEN
         questionDynamoDBMapper.save(question);
@@ -93,7 +92,7 @@ class QuestionDaoTest {
     @Test
     void saveAnswerTypes() {
         //GIVEN
-        AnswerType answerType = prepareAnswerType();
+        AnswerType answerType = new QuestionTestData().prepareAnswerType();
 
         //WHEN
         when(tableMapper.getDynamoDBMapper(any())).thenReturn(answerTypeDynamoDBMapper);
@@ -104,13 +103,13 @@ class QuestionDaoTest {
         verify(tableMapper).getDynamoDBMapper(AnswerType.ANSWER_TYPE_TABLE_NAME);
         PaginatedList<AnswerType> answerTypes = answerTypeDynamoDBMapper.scan(AnswerType.class, new DynamoDBScanExpression());
         assertEquals(1, answerTypes.size());
-        assertEquals("kindOfFeedback", answerTypes.get(0).getType());
+        assertEquals(answerType.getType(), answerTypes.get(0).getType());
     }
 
     @Test
     void saveQuestions() {
         //GIVEN
-        Question question = prepareQuestion();
+        Question question = new QuestionTestData().prepareQuestion();
 
         //WHEN
         when(tableMapper.getDynamoDBMapper(any())).thenReturn(questionDynamoDBMapper);
@@ -121,20 +120,7 @@ class QuestionDaoTest {
         verify(tableMapper).getDynamoDBMapper(Question.QUESTION_TABLE_NAME);
         PaginatedList<Question> questions = questionDynamoDBMapper.scan(Question.class, new DynamoDBScanExpression());
         assertEquals(1, questions.size());
-        assertEquals("10", questions.get(0).getId());
+        assertEquals(question.getId(), questions.get(0).getId());
     }
 
-    private AnswerType prepareAnswerType() {
-        AnswerType answerType = new AnswerType();
-        answerType.setType("kindOfFeedback");
-        answerType.setValues(Arrays.asList("monthly", "quarterly", "annual"));
-        return answerType;
-    }
-
-    private Question prepareQuestion() {
-        Question question = new Question();
-        question.setId("10");
-        question.setOrdinal(12L);
-        return question;
-    }
 }

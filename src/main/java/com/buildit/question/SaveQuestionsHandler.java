@@ -2,7 +2,7 @@ package com.buildit.question;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-import com.buildit.dynamoDB.TableMapper;
+import com.buildit.dynamoDB.TableMapperImpl;
 import com.buildit.response.ApiGatewayResponse;
 import com.buildit.response.Response;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -17,6 +17,16 @@ public class SaveQuestionsHandler implements RequestHandler<Map<String, Object>,
 
     private final static Logger LOGGER = LogManager.getLogger(SaveQuestionsHandler.class);
 
+    private final QuestionDao questionDao;
+
+    public SaveQuestionsHandler() {
+        questionDao = new QuestionDao(new TableMapperImpl());
+    }
+
+    public SaveQuestionsHandler(QuestionDao questionDao) {
+        this.questionDao = questionDao;
+    }
+
     @Override
     public ApiGatewayResponse handleRequest(Map<String, Object> input, Context context) {
         try {
@@ -24,7 +34,6 @@ public class SaveQuestionsHandler implements RequestHandler<Map<String, Object>,
             String body = (String) input.get("body");
             List<Question> questions = objectMapper.readValue(body, new TypeReference<List<Question>>() {});
 
-            QuestionDao questionDao = new QuestionDao(new TableMapper());
             questionDao.saveQuestions(questions);
 
             return ApiGatewayResponse.builder()

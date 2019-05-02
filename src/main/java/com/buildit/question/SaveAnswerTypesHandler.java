@@ -2,7 +2,7 @@ package com.buildit.question;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-import com.buildit.dynamoDB.TableMapper;
+import com.buildit.dynamoDB.TableMapperImpl;
 import com.buildit.response.ApiGatewayResponse;
 import com.buildit.response.Response;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -17,19 +17,28 @@ public class SaveAnswerTypesHandler implements RequestHandler<Map<String, Object
 
     private final static Logger LOGGER = LogManager.getLogger(SaveAnswerTypesHandler.class);
 
+    private final QuestionDao questionDao;
+
+    public SaveAnswerTypesHandler() {
+        questionDao = new QuestionDao(new TableMapperImpl());
+    }
+
+    public SaveAnswerTypesHandler(QuestionDao questionDao) {
+        this.questionDao = questionDao;
+    }
+
     @Override
     public ApiGatewayResponse handleRequest(Map<String, Object> input, Context context) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             String body = (String) input.get("body");
-            List<AnswerType> questions = objectMapper.readValue(body, new TypeReference<List<AnswerType>>(){});
+            List<AnswerType> answerTypes = objectMapper.readValue(body, new TypeReference<List<AnswerType>>(){});
 
-            QuestionDao questionDao = new QuestionDao(new TableMapper());
-            questionDao.saveAnswerTypes(questions);
+            questionDao.saveAnswerTypes(answerTypes);
 
             return ApiGatewayResponse.builder()
                     .setStatusCode(200)
-                    .setObjectBody(questions)
+                    .setObjectBody(answerTypes)
                     .build();
         } catch (Exception ex) {
             LOGGER.error("Error in saving answer types: " + ex);

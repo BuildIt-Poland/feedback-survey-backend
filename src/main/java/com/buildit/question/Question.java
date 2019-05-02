@@ -7,7 +7,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 @DynamoDBTable(tableName = "PLACEHOLDER_QUESTION_TABLE_NAME")
 public class Question {
 
-    static final String QUESTION_TABLE_NAME = System.getenv("QUESTION_TABLE_NAME");
+    public static final String QUESTION_TABLE_NAME = System.getenv("QUESTION_TABLE_NAME");
 
     private String id;
 

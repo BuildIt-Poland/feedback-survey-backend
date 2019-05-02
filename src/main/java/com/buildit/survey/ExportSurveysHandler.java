@@ -2,7 +2,7 @@ package com.buildit.survey;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-import com.buildit.dynamoDB.TableMapper;
+import com.buildit.dynamoDB.TableMapperImpl;
 import com.buildit.question.QuestionDao;
 import com.buildit.response.ApiGatewayResponse;
 import com.buildit.response.Response;
@@ -17,14 +17,22 @@ public class ExportSurveysHandler implements RequestHandler<Map<String, Object>,
 
     private static final Logger LOGGER = LogManager.getLogger(ExportSurveysHandler.class);
 
+    private final ExportSurveyService exportSurveyService;
+
+    public ExportSurveysHandler() {
+        exportSurveyService = new ExportSurveyService(
+                new QuestionDao(new TableMapperImpl()),
+                new SurveyDao(new TableMapperImpl())
+        );
+    }
+
+    public ExportSurveysHandler(ExportSurveyService exportSurveyService) {
+        this.exportSurveyService = exportSurveyService;
+    }
+
     @Override
     public ApiGatewayResponse handleRequest(Map<String, Object> input, Context context) {
-
         try {
-            ExportSurveyService exportSurveyService = new ExportSurveyService(
-                    new QuestionDao(new TableMapper()),
-                    new SurveyDao(new TableMapper())
-            );
             byte[] fileContent = exportSurveyService.exportToCSVFile();
 
             return ApiGatewayResponse.builder()
