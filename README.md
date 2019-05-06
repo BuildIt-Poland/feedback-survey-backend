@@ -17,24 +17,13 @@ Other:
     java --version
     ```
     
-2. Download maven 3.6.0 and set environment variables, [the instruction for mac](https://hathaway.cc/2008/06/how-to-edit-your-path-environment-variables-on-mac/)
-    ```
-    export M2_HOME="/Library/Maven/apache-maven-3.6.0"
-    export PATH=${PATH}:${M2_HOME}/bin
-    ```
-    
-    Verify:
-    ```
-    mvn --version
-    ```
-    
-3. Plugin for binary files
+2. Plugin for binary files
     ```
     npm install --save-dev serverless-apigw-binary
     ```
     Source: https://github.com/maciejtreder/serverless-apigw-binary
     
-4. Plugin for create domain
+3. Plugin for create domain
     ```
     npm install serverless-domain-manager --save-dev
     ```
@@ -48,7 +37,7 @@ If you in the project directory
     ```
 2. Build project:
     ```
-    mvn clean install
+    ./mvnw clean install
     ```
 3. Deploy the Service 'feedback-survey':
     ```
