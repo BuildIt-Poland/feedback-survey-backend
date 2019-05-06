@@ -1,7 +1,7 @@
 service: feedback-survey-export
 
 plugins:
-  - serverless-apigwy-binary
+  - serverless-apigw-binary
   - serverless-domain-manager
 
 custom:
