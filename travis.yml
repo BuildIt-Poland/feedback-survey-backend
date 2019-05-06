@@ -1,0 +1,24 @@
+language: java
+jdk:
+  - openjdk8
+
+cache:
+  directories:
+    - $HOME/.m2
+
+install:
+  - npm install -g serverless
+  - npm install --save-dev serverless-apigw-binary
+  - npm install serverless-domain-manager --save-dev
+
+script:
+  - ./mvnw clean install
+  - bash <(curl -s https://codecov.io/bash)
+
+deploy:
+  - provider: script
+    script: bash deploy.sh
+    skip_cleanup: true
+    on:
+      branch: master
+
