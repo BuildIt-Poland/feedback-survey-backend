@@ -21,10 +21,10 @@ curl -d '[
             {
                "type":"rating",
                "values":[
-                  "Excellent",
-                  "Good",
+                  "Bad",
                   "Average",
-                  "Bad"
+                  "Good",
+                  "Excellent"
                ]
             }
          ]' -H "Content-Type: application/json" -X POST $ADDRESS/saveAnswerTypes
