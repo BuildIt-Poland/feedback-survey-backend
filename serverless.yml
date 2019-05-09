@@ -7,6 +7,7 @@ custom:
   surveyTableName: 'feedback_survey-${self:provider.stage}'
   questionTableName: 'feedback_question-${self:provider.stage}'
   answerTypeTableName: 'feedback_answer-type-${self:provider.stage}'
+  emailTableName: 'feedback_email-${self:provider.stage}'
 
   customDomain:
     domainName: 'feedback-survey-${self:provider.stage}.buildit.digital'
@@ -33,10 +34,19 @@ provider:
         - { "Fn::GetAtt": ["surveyTable", "Arn"] }
         - { "Fn::GetAtt": ["questionTable", "Arn"] }
         - { "Fn::GetAtt": ["answerTypeTable", "Arn"] }
+        - { "Fn::GetAtt": ["emailTable", "Arn"] }
+
+    - Effect: "Allow"
+      Action:
+        - "ses:SendEmail"
+        - "ses:SendRawEmail"
+      Resource: "*"
+
   environment:
     SURVEY_TABLE_NAME: ${self:custom.surveyTableName}
     QUESTION_TABLE_NAME: ${self:custom.questionTableName}
     ANSWER_TYPE_TABLE_NAME: ${self:custom.answerTypeTableName}
+    EMAIL_TABLE_NAME: ${self:custom.emailTableName}
 
 
 package:
@@ -71,6 +81,13 @@ functions:
     events:
       - http:
           path: /saveAnswerTypes
+          method: post
+
+  saveEmail:
+    handler: com.buildit.email.SaveEmailHandler
+    events:
+      - http:
+          path: /saveEmail
           method: post
 
 resources:
@@ -116,6 +133,20 @@ resources:
             AttributeType: S
         KeySchema:
           - AttributeName: type
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+
+    emailTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.emailTableName}
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: N
+        KeySchema:
+          - AttributeName: id
             KeyType: HASH
         ProvisionedThroughput:
           ReadCapacityUnits: 1

@@ -15,10 +15,11 @@ class SurveyDao {
         this.tableMapper = tableMapper;
     }
 
-    void save(Survey survey) {
+    Survey save(Survey survey) {
         DynamoDBMapper mapper = tableMapper.getDynamoDBMapper(Survey.SURVEY_TABLE_NAME);
         survey.setSavedDate(LocalDateTime.now());
         mapper.save(survey);
+        return survey;
     }
 
     List<Survey> getAll() {

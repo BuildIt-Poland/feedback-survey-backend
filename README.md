@@ -49,6 +49,10 @@ If you in the project directory
     sls deploy
     ```
 
+# AWS configuration 
+
+[Verify a New Email Address, steps 1-2](https://aws.amazon.com/getting-started/tutorials/send-an-email/)
+
 # More information about Serverless:
 
 https://serverless.com/framework/docs/providers/aws/guide/quick-start/

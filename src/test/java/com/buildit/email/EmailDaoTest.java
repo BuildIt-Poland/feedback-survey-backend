@@ -1,4 +1,4 @@
-package com.buildit.survey;
+package com.buildit.email;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
@@ -17,18 +17,17 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @RunWith(JUnitPlatform.class)
-class SurveyDaoTest {
+class EmailDaoTest {
 
     private static AmazonDynamoDBLocal amazonDynamoDBLocal;
 
@@ -38,15 +37,15 @@ class SurveyDaoTest {
     private TableMapper tableMapper;
 
     @InjectMocks
-    private SurveyDao surveyDao;
+    private EmailDao emailDao;
 
     @BeforeAll
     public static void setUpClass() {
         DaoTestHelper.initSqlite();
         amazonDynamoDBLocal = DynamoDBEmbedded.create();
-        dynamoDBMapper = DaoTestHelper.getDBMapper(amazonDynamoDBLocal, Survey.SURVEY_TABLE_NAME);
+        dynamoDBMapper = DaoTestHelper.getDBMapper(amazonDynamoDBLocal, Email.EMAIL_TABLE_NAME);
 
-        DaoTestHelper.createTable(amazonDynamoDBLocal, dynamoDBMapper, Survey.class);
+        DaoTestHelper.createTable(amazonDynamoDBLocal, dynamoDBMapper, Email.class);
     }
 
     @AfterAll
@@ -55,38 +54,34 @@ class SurveyDaoTest {
     }
 
     @Test
-    void getAll() {
+    void getEmailConfiguration() {
         //GIVEN
-        Survey survey = new SurveyTestData().prepareSurvey();
+        Email email = new EmailTestData().prepareEmail();
+        dynamoDBMapper.save(email);
 
         //WHEN
-        dynamoDBMapper.save(survey);
         when(tableMapper.getDynamoDBMapper(any())).thenReturn(dynamoDBMapper);
 
-        List<Survey> surveys = surveyDao.getAll();
+        Optional<Email> emailOptional = emailDao.getEmailConfiguration();
 
         //THEN
-        verify(tableMapper).getDynamoDBMapper(Survey.SURVEY_TABLE_NAME);
-        assertEquals(1, surveys.size());
+        assertTrue(emailOptional.isPresent());
     }
 
     @Test
     void save() {
         //GIVEN
-        Survey survey = new SurveyTestData().prepareSurvey();
+        Email email = new EmailTestData().prepareEmail();
 
         //WHEN
         when(tableMapper.getDynamoDBMapper(any())).thenReturn(dynamoDBMapper);
 
-        surveyDao.save(survey);
+        emailDao.save(email);
 
         //THEN
-        verify(tableMapper).getDynamoDBMapper(Survey.SURVEY_TABLE_NAME);
-        PaginatedList<Survey> surveys = dynamoDBMapper.scan(Survey.class, new DynamoDBScanExpression());
-        assertEquals(1, surveys.size());
-        assertEquals("surveyId", survey.getSurveyId());
-        assertNotNull(survey.getId());
-        assertNotNull(survey.getSavedDate());
+        verify(tableMapper).getDynamoDBMapper(Email.EMAIL_TABLE_NAME);
+        PaginatedList<Email> emails = dynamoDBMapper.scan(Email.class, new DynamoDBScanExpression());
+        assertEquals(1, emails.size());
     }
 
 }

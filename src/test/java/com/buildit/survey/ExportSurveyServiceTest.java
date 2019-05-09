@@ -69,6 +69,23 @@ class ExportSurveyServiceTest {
         verifyFileContent(file);
     }
 
+
+    @Test
+    void generateCSVFileForSurvey() throws IOException {
+        //GIVEN
+        Survey survey = createSurvey();
+        List<Question> questions = Arrays.asList(createQuestion(1L), createQuestion(2L), createQuestion(3L));
+
+        //WHEN
+        when(questionDao.getQuestions()).thenReturn(questions);
+
+        File file = testee.generateCSVFile(survey);
+
+        //THEN
+        assertTrue(file.exists());
+        verifyFileContent(file);
+    }
+
     private File createFile(byte[] fileContent) throws IOException {
         File file = File.createTempFile("survey-temp", "csv");
         OutputStream os = new FileOutputStream(file);

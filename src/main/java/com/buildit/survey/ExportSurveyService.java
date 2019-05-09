@@ -12,10 +12,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -35,6 +32,10 @@ class ExportSurveyService {
     byte[] exportToCSVFile() throws IOException {
         File file = generateCSVFile(surveyService.getAll(), questionDao.getQuestions());
         return Files.readAllBytes(file.toPath());
+    }
+
+    File generateCSVFile(Survey survey) throws IOException {
+        return generateCSVFile(Collections.singletonList(survey), questionDao.getQuestions());
     }
 
     File generateCSVFile(List<Survey> surveys, List<Question> questions) throws IOException {
