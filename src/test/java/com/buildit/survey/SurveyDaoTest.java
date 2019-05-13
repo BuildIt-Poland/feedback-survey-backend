@@ -86,7 +86,6 @@ class SurveyDaoTest {
         assertEquals(1, surveys.size());
         assertEquals("surveyId", survey.getSurveyId());
         assertNotNull(survey.getId());
-        assertNotNull(survey.getSavedDate());
     }
 
 }

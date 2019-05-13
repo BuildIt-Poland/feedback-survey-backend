@@ -30,15 +30,16 @@ class ExportSurveyService {
     }
 
     byte[] exportToCSVFile() throws IOException {
-        File file = generateCSVFile(surveyService.getAll(), questionDao.getQuestions());
+        List<SurveyDTO> surveys = new SurveyMapper().mapToDTO(surveyService.getAll());
+        File file = generateCSVFile(surveys, questionDao.getQuestions());
         return Files.readAllBytes(file.toPath());
     }
 
-    File generateCSVFile(Survey survey) throws IOException {
+    File generateCSVFile(SurveyDTO survey) throws IOException {
         return generateCSVFile(Collections.singletonList(survey), questionDao.getQuestions());
     }
 
-    File generateCSVFile(List<Survey> surveys, List<Question> questions) throws IOException {
+    File generateCSVFile(List<SurveyDTO> surveys, List<Question> questions) throws IOException {
         File file = File.createTempFile("feedback-survey-temp", ".csv");
         FileWriter out = new FileWriter(file);
 
@@ -62,22 +63,23 @@ class ExportSurveyService {
     }
 
     private String[] prepareHeaders(List<Question> questions) {
-        Stream<String> constantHeaders = Stream.of("Id", "Date");
+        Stream<String> constantHeaders = Stream.of("Id", "Employee name", "Date");
         Stream<String> questionsContent = questions.stream().map(Question::getContent);
         return Stream.concat(constantHeaders, questionsContent)
                 .toArray(String[]::new);
     }
 
-    private List<String> prepareRecord(Survey survey, List<Question> questions) {
+    private List<String> prepareRecord(SurveyDTO survey, List<Question> questions) {
         List<String> record = new ArrayList<>(Arrays.asList(
                 survey.getSurveyId(),
+                survey.getEmployeeName(),
                 LocalDateTimeFormatter.parseDate(survey.getSavedDate())
         ));
         record.addAll(getAnswers(survey, questions));
         return record;
     }
 
-    private List<String> getAnswers(Survey survey, List<Question> questions) {
+    private List<String> getAnswers(SurveyDTO survey, List<Question> questions) {
         Map<String, String> answerForQuestion = survey.getAnswers().stream()
                 .collect(Collectors.toMap(Answer::getQuestionId, Answer::getAnswer));
 

@@ -65,7 +65,7 @@ class SaveSurveyHandlerTest {
     @Test
     void handleRequest() throws JsonProcessingException {
         //GIVEN
-        Survey survey = new SurveyTestData().prepareSurvey();
+        SurveyDTO survey = new SurveyTestData().prepareSurveyDTO();
         ObjectMapper objectMapper = new ObjectMapper();
         String body = objectMapper.writeValueAsString(survey);
 

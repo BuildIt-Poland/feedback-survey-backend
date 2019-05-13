@@ -21,6 +21,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 
@@ -39,12 +40,12 @@ public class EmailSender {
      *
      * @return true if mail is correctly generated.
      */
-    public boolean sendMail(File file) {
+    public boolean sendMail(File file, Map<String, String> parameters) {
         try {
             Optional<Email> emailOptional = emailDao.getEmailConfiguration();
             if (emailOptional.isPresent()) {
                 Email email = emailOptional.get();
-                send(email, file);
+                send(email, file, parameters);
                 return true;
             }
         } catch (Exception ex) {
@@ -53,8 +54,8 @@ public class EmailSender {
         return false;
     }
 
-    private void send(Email email, File file) throws MessagingException, IOException {
-        SendRawEmailRequest rawEmailRequest = prepareRawEmail(email, file);
+    private void send(Email email, File file, Map<String, String> parameters) throws MessagingException, IOException {
+        SendRawEmailRequest rawEmailRequest = prepareRawEmail(email, file, parameters);
 
         AmazonSimpleEmailService client =
                 AmazonSimpleEmailServiceClientBuilder.standard()
@@ -62,14 +63,14 @@ public class EmailSender {
         client.sendRawEmail(rawEmailRequest);
     }
 
-    private SendRawEmailRequest prepareRawEmail(Email email, File file) throws MessagingException, IOException {
+    private SendRawEmailRequest prepareRawEmail(Email email, File file, Map<String, String> parameters) throws MessagingException, IOException {
         Session session = Session.getDefaultInstance(new Properties());
 
         MimeMessage message = new MimeMessage(session);
-        message.setSubject(email.getSubject(), "UTF-8");
+        message.setSubject(formatText(email.getSubject(), parameters), "UTF-8");
         message.setFrom(new InternetAddress(email.getSender()));
         message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email.getRecipients()));
-        message.setContent(prepareMessage(email, file));
+        message.setContent(prepareMessage(email, file, parameters));
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         message.writeTo(outputStream);
@@ -78,23 +79,23 @@ public class EmailSender {
         return new SendRawEmailRequest(rawMessage);
     }
 
-    private MimeMultipart prepareMessage(Email email, File file) throws MessagingException {
+    private MimeMultipart prepareMessage(Email email, File file, Map<String, String> parameters) throws MessagingException {
         MimeMultipart msg = new MimeMultipart("mixed");
-        msg.addBodyPart(prepareMessageBody(email));
+        msg.addBodyPart(prepareMessageBody(email, parameters));
         msg.addBodyPart(prepareAttachment(file));
         return msg;
     }
 
-    private MimeBodyPart prepareMessageBody(Email email) throws MessagingException {
+    private MimeBodyPart prepareMessageBody(Email email, Map<String, String> parameters) throws MessagingException {
         MimeMultipart msgBody = new MimeMultipart("alternative");
 
         // Define the text part.
         MimeBodyPart textPart = new MimeBodyPart();
-        textPart.setContent(email.getBodyText(), "text/plain; charset=UTF-8");
+        textPart.setContent(formatText(email.getBodyText(), parameters), "text/plain; charset=UTF-8");
 
         // Define the HTML part.
         MimeBodyPart htmlPart = new MimeBodyPart();
-        htmlPart.setContent(email.getBodyHtml(), "text/html; charset=UTF-8");
+        htmlPart.setContent(formatText(email.getBodyHtml(), parameters), "text/html; charset=UTF-8");
 
         msgBody.addBodyPart(textPart);
         msgBody.addBodyPart(htmlPart);
@@ -111,5 +112,12 @@ public class EmailSender {
         attachment.setDataHandler(new DataHandler(fds));
         attachment.setFileName(file.getName());
         return attachment;
+    }
+
+    private String formatText(String text, Map<String, String> parameters) {
+        for (String param : parameters.keySet()) {
+            text = text.replace("{" + param + "}", parameters.get(param));
+        }
+        return text;
     }
 }

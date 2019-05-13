@@ -37,7 +37,7 @@ public class SaveSurveyHandler implements RequestHandler<Map<String, Object>, Ap
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             String body = (String) input.get("body");
-            Survey survey = objectMapper.readValue(body, Survey.class);
+            SurveyDTO survey = objectMapper.readValue(body, SurveyDTO.class);
 
             survey = surveyService.save(survey);
 

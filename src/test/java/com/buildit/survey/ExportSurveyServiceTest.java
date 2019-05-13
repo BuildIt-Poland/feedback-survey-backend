@@ -13,7 +13,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.*;
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -38,7 +37,7 @@ class ExportSurveyServiceTest {
     @Test
     void generateCSVFile() throws IOException {
         //GIVEN
-        List<Survey> surveys = Arrays.asList(createSurvey(), createSurvey());
+        List<SurveyDTO> surveys = Arrays.asList(new SurveyTestData().prepareSurveyDTO(), new SurveyTestData().prepareSurveyDTO());
         List<Question> questions = Arrays.asList(createQuestion(1L), createQuestion(2L), createQuestion(3L));
 
         //WHEN
@@ -46,13 +45,13 @@ class ExportSurveyServiceTest {
 
         //THEN
         assertTrue(file.exists());
-        verifyFileContent(file);
+        verifyFileContent(file, "Joanna");
     }
 
     @Test
     void exportToCSVFile() throws IOException {
         //GIVEN
-        List<Survey> surveys = Arrays.asList(createSurvey(), createSurvey());
+        List<Survey> surveys = Arrays.asList(new SurveyTestData().prepareSurvey(), new SurveyTestData().prepareSurvey());
         List<Question> questions = Arrays.asList(createQuestion(1L), createQuestion(2L), createQuestion(3L));
 
         //WHEN
@@ -66,14 +65,14 @@ class ExportSurveyServiceTest {
         verify(surveyDao).getAll();
 
         File file = createFile(fileContent);
-        verifyFileContent(file);
+        verifyFileContent(file, "");
     }
 
 
     @Test
     void generateCSVFileForSurvey() throws IOException {
         //GIVEN
-        Survey survey = createSurvey();
+        SurveyDTO survey = new SurveyTestData().prepareSurveyDTO();
         List<Question> questions = Arrays.asList(createQuestion(1L), createQuestion(2L), createQuestion(3L));
 
         //WHEN
@@ -83,7 +82,7 @@ class ExportSurveyServiceTest {
 
         //THEN
         assertTrue(file.exists());
-        verifyFileContent(file);
+        verifyFileContent(file, "Joanna");
     }
 
     private File createFile(byte[] fileContent) throws IOException {
@@ -94,15 +93,16 @@ class ExportSurveyServiceTest {
         return file;
     }
 
-    private void verifyFileContent(File file) throws IOException {
+    private void verifyFileContent(File file, String employeeName) throws IOException {
         Reader in = new FileReader(file.getPath());
         Iterable<CSVRecord> records = CSVFormat.DEFAULT
                 .withFirstRecordAsHeader()
                 .parse(in);
 
         for (CSVRecord record : records) {
-            assertEquals(5, record.size());
+            assertEquals(6, record.size());
             assertEquals("surveyId", record.get("Id"));
+            assertEquals(employeeName, record.get("Employee name"));
             assertEquals("2019-04-22 11:22:33", record.get("Date"));
             assertEquals("answer 1", record.get("Question 1"));
             assertEquals("answer 2", record.get("Question 2"));
@@ -116,22 +116,6 @@ class ExportSurveyServiceTest {
         question.setContent("Question " + id);
         question.setOrdinal(id);
         return question;
-    }
-
-    private Survey createSurvey() {
-        List<Answer> answers = Arrays.asList(createAnswer("1"), createAnswer("2"), createAnswer("3"));
-        Survey survey = new Survey();
-        survey.setSurveyId("surveyId");
-        survey.setSavedDate(LocalDateTime.of(2019, 4, 22, 11, 22, 33, 44));
-        survey.setAnswers(answers);
-        return survey;
-    }
-
-    private Answer createAnswer(String id) {
-        Answer answer = new Answer();
-        answer.setQuestionId(id);
-        answer.setAnswer("answer " + id);
-        return answer;
     }
 
 }

@@ -17,8 +17,9 @@ import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -58,9 +59,10 @@ class ExportSurveysHandlerTest {
     @Test
     void handleRequest() {
         //GIVEN
+        Survey survey = new SurveyTestData().prepareSurvey();
         Map<String, Object> input = new HashMap<>();
         questionDynamoDBMapper.save(new QuestionTestData().prepareQuestion());
-        surveyDynamoDBMapper.save(createSurvey());
+        surveyDynamoDBMapper.save(survey);
 
         //WHEN
         ApiGatewayResponse response = testee.handleRequest(input, null);
@@ -69,23 +71,7 @@ class ExportSurveysHandlerTest {
         assertEquals(200, response.getStatusCode());
         assertTrue(response.isIsBase64Encoded());
         String fileContent = new String(Base64.getDecoder().decode(response.getBody()));
-        assertTrue(fileContent.contains("Id,Date,Question 1."));
-        assertTrue(fileContent.contains("surveyId,2019-04-22 11:22:33,answer 1"));
-    }
-
-    private Survey createSurvey() {
-        List<Answer> answers = Arrays.asList(createAnswer("1"), createAnswer("2"), createAnswer("3"));
-        Survey survey = new Survey();
-        survey.setSurveyId("surveyId");
-        survey.setSavedDate(LocalDateTime.of(2019, 4, 22, 11, 22, 33, 44));
-        survey.setAnswers(answers);
-        return survey;
-    }
-
-    private Answer createAnswer(String id) {
-        Answer answer = new Answer();
-        answer.setQuestionId(id);
-        answer.setAnswer("answer " + id);
-        return answer;
+        assertTrue(fileContent.contains("Id,Employee name,Date,Question 1."));
+        assertTrue(fileContent.contains("surveyId,,2019-04-22 11:22:33,answer 1"));
     }
 }

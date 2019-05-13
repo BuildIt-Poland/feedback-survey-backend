@@ -10,6 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -31,7 +32,7 @@ class EmailSenderTest {
         File file = File.createTempFile("test", "csv");
 
         //WHEN
-        boolean result = emailSender.sendMail(file);
+        boolean result = emailSender.sendMail(file, new HashMap<>());
 
         //THEN
         assertFalse(result);
@@ -46,7 +47,7 @@ class EmailSenderTest {
         //WHEN
         when(emailDao.getEmailConfiguration()).thenReturn(Optional.of(email));
 
-        boolean result = emailSender.sendMail(file);
+        boolean result = emailSender.sendMail(file, new HashMap<>());
 
         //THEN
         assertFalse(result);

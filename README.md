@@ -1,3 +1,8 @@
+# About
+The application automatically configures AWS and creates a database with initial values.
+It's a serverless application using AWS Lambda functions written in Java, API Gateway, Simple Email Service and S3, frontend based on react/grommet.
+The data will be stored in a DynamoDB, and the service will be deployed to AWS.
+
 # Pre-requisites
 
 Serverless:

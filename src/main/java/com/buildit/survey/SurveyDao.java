@@ -4,7 +4,6 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
 import com.buildit.dynamoDB.TableMapper;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 class SurveyDao {
@@ -15,11 +14,9 @@ class SurveyDao {
         this.tableMapper = tableMapper;
     }
 
-    Survey save(Survey survey) {
+    void save(Survey survey) {
         DynamoDBMapper mapper = tableMapper.getDynamoDBMapper(Survey.SURVEY_TABLE_NAME);
-        survey.setSavedDate(LocalDateTime.now());
         mapper.save(survey);
-        return survey;
     }
 
     List<Survey> getAll() {
