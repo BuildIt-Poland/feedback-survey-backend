@@ -1,8 +1,37 @@
 #!/bin/bash
 
+# Parameters
+stage="dev"
+domain="buildit.digital"
+
+
+# Installation
+npm install -g serverless
+npm install --save-dev serverless-apigw-binary
+npm install serverless-domain-manager --save-dev
+
+
+# Create domain
+serverless create_domain
+
+
 # Deploy the Service 'feedback-survey'
-sls deploy
+echo "Deploy 'feedback-survey'"
+sls deploy --stage $stage --domain $domain
+
 
 # Deploy Service 'feedback-survey-export'
+echo "Deploy 'feedback-survey-export'"
 cd export
-sls deploy
+sls deploy --stage $stage --domain $domain
+cd ..
+
+
+# Initial data
+cd src/scripts
+ADDRESS="https://feedback-survey-$stage.$domain/api"
+./saveAnswerTypes.sh $ADDRESS
+echo ""
+./saveQuestions.sh $ADDRESS
+echo ""
+./saveEmail.sh $ADDRESS

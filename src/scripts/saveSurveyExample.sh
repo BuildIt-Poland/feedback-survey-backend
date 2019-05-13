@@ -1,6 +1,8 @@
 #! /bin/bash
 
-ADDRESS="https://-------.execute-api.us-east-1.amazonaws.com/dev"
+ADDRESS=$1
+
+echo "save survey example"
 
 curl -d '{
            "id" : "1",

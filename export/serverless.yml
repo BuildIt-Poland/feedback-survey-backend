@@ -9,9 +9,8 @@ custom:
   questionTableName: 'feedback_question-${self:provider.stage}'
   answerTypeTableName: 'feedback_answer-type-${self:provider.stage}'
 
-
   customDomain:
-    domainName: 'feedback-survey-${self:provider.stage}.buildit.digital'
+    domainName: 'feedback-survey-${self:provider.stage}.${opt:domain}'
     basePath: 'export'
     stage: ${self:provider.stage}
     createRoute53Record: true
@@ -23,7 +22,7 @@ custom:
 provider:
   name: aws
   runtime: java8
-  stage: dev
+  stage: ${opt:stage, 'dev'}
   region: us-east-1
 
   iamRoleStatements:

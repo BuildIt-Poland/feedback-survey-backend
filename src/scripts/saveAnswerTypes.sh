@@ -1,6 +1,8 @@
 #! /bin/bash
 
-ADDRESS="https://------.execute-api.us-east-1.amazonaws.com/prod"
+ADDRESS=$1
+
+echo "save answer types"
 
 curl -d '[
             {
