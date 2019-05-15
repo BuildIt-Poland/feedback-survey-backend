@@ -5,19 +5,19 @@ The data will be stored in a DynamoDB, and the service will be deployed to AWS.
 
 
 # Quick installation 
-Requirements:
+## Requirements:
 1. Java 8
 2. Node.js v6.5.0 or later
 3. An AWS account
 
-Run:
-In the file 'configuration.txt' enter parameters values
-Run file 'deploy.sh':
+## Run:
+1. In the file 'configuration.txt' enter parameters values
+2. Run file 'deploy.sh':
 ```
 ./deploy.sh
 ```
 
-Verify mail on aws (sender and receiver)
+## Verify mail on aws (sender and receiver)
 1. Enter the Amazon SES Console
 2. Click Verify an Email Address
 3. You will receive a verification email
