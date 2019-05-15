@@ -1,6 +1,6 @@
 #!/bin/bash
 
-domain="buildit.digital"
+domain="feedback-survey-dev.buildit.digital"
 
 # Deploy the Service 'feedback-survey'
 sls deploy --domain $domain
