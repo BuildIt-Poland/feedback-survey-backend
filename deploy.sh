@@ -31,7 +31,7 @@ cd ..
 
 # Initial data
 cd src/scripts
-ADDRESS="https://feedback-survey-$stage.$domain/api"
+ADDRESS="https://$domain/api"
 ./saveAnswerTypes.sh $ADDRESS
 echo ""
 ./saveQuestions.sh $ADDRESS
