@@ -40,7 +40,7 @@ class ExportSurveyService {
     }
 
     File generateCSVFile(List<SurveyDTO> surveys, List<Question> questions) throws IOException {
-        File file = File.createTempFile("feedback-survey-temp", ".csv");
+        File file = File.createTempFile("feedback-survey", ".csv");
         FileWriter out = new FileWriter(file);
 
         String[] headers = prepareHeaders(questions);

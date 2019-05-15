@@ -50,7 +50,7 @@ provider:
 
 
 package:
-  artifact: target/feedback-survey-SNAPSHOT-1.jar
+  artifact: target/feedback-survey-1.jar
 
 functions:
   saveSurvey:

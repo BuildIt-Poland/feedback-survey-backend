@@ -1,8 +1,10 @@
 #!/bin/bash
 
 # Parameters
-stage="dev"
-domain="buildit.digital"
+stage="prod"
+domain=""
+sender=""
+recipients=""
 
 
 # Installation
@@ -13,6 +15,10 @@ npm install serverless-domain-manager --save-dev
 
 # Create domain
 serverless create_domain
+
+
+# Build project
+./mvnw clean install
 
 
 # Deploy the Service 'feedback-survey'
@@ -34,4 +40,4 @@ ADDRESS="https://feedback-survey-$stage.$domain/api"
 echo ""
 ./saveQuestions.sh $ADDRESS
 echo ""
-./saveEmail.sh $ADDRESS
+./saveEmail.sh $ADDRESS $sender $recipients

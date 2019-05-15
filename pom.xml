@@ -5,7 +5,7 @@
     <groupId>com.buildit.survey</groupId>
     <artifactId>feedback-survey</artifactId>
     <packaging>jar</packaging>
-    <version>SNAPSHOT-1</version>
+    <version>1</version>
     <name>feedback-survey</name>
 
     <properties>

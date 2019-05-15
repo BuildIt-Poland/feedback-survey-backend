@@ -90,15 +90,18 @@ public class EmailSender {
         MimeMultipart msgBody = new MimeMultipart("alternative");
 
         // Define the text part.
-        MimeBodyPart textPart = new MimeBodyPart();
-        textPart.setContent(formatText(email.getBodyText(), parameters), "text/plain; charset=UTF-8");
+        if (email.getBodyText() != null) {
+            MimeBodyPart textPart = new MimeBodyPart();
+            textPart.setContent(formatText(email.getBodyText(), parameters), "text/plain; charset=UTF-8");
+            msgBody.addBodyPart(textPart);
+        }
 
         // Define the HTML part.
         MimeBodyPart htmlPart = new MimeBodyPart();
-        htmlPart.setContent(formatText(email.getBodyHtml(), parameters), "text/html; charset=UTF-8");
-
-        msgBody.addBodyPart(textPart);
-        msgBody.addBodyPart(htmlPart);
+        if (email.getBodyHtml() != null) {
+            htmlPart.setContent(formatText(email.getBodyHtml(), parameters), "text/html; charset=UTF-8");
+            msgBody.addBodyPart(htmlPart);
+        }
 
         MimeBodyPart wrap = new MimeBodyPart();
         wrap.setContent(msgBody);

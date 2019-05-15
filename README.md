@@ -3,7 +3,29 @@ The application automatically configures AWS and creates a database with initial
 It's a serverless application using AWS Lambda functions written in Java, API Gateway, Simple Email Service and S3, frontend based on react/grommet.
 The data will be stored in a DynamoDB, and the service will be deployed to AWS.
 
-# Pre-requisites
+
+# Quick installation 
+Requirements:
+1. Java 8
+2. Node.js v6.5.0 or later
+3. An AWS account
+
+Run:
+Open file deploy.sh.
+In the section 'Parameters' enter parameters values
+```
+./deploy.sh
+```
+
+Verify mail on aws
+1. Enter the Amazon SES Console
+2. Click Verify an Email Address
+3. You will receive a verification email
+
+[More about email verification, steps 1-2](https://aws.amazon.com/getting-started/tutorials/send-an-email/)
+
+# Development 
+## Pre-requisites
 
 Serverless:
 1. Node.js v6.5.0 or later.
@@ -34,7 +56,7 @@ Other:
     ```
     Source: https://github.com/amplify-education/serverless-domain-manager
     
-# Build and deploy
+## Build and deploy
 If you in the project directory
 1. Create custom domain (domain is defined in serverless.yml):
     ```
@@ -54,20 +76,12 @@ If you in the project directory
     sls deploy
     ```
 
-# AWS configuration 
+## AWS configuration 
 
 [Verify a New Email Address, steps 1-2](https://aws.amazon.com/getting-started/tutorials/send-an-email/)
 
-# More information about Serverless:
+## More information about Serverless:
 
 https://serverless.com/framework/docs/providers/aws/guide/quick-start/
 
 https://serverless.com/blog/how-to-create-a-rest-api-in-java-using-dynamodb-and-serverless/
-
-
-# REST API
-
-Save survey:
-```
-curl -d '{"surveyId": "12345", "answers":[{"questionId": "1", "answer": "answer123"}]}' -H "Content-Type: application/json" -X POST https://address.execute-api.us-east-1.amazonaws.com/dev/saveSurvey
-```

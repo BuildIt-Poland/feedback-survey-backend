@@ -8,8 +8,6 @@ class EmailTestData {
         email.setSender("sender@test.com");
         email.setRecipients("recipient@test.com,recipient2@test.com");
         email.setSubject("subject");
-        email.setBodyText("test");
-        email.setBodyHtml("test");
         return email;
     }
 }
