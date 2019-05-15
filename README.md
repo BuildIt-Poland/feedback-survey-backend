@@ -11,13 +11,13 @@ Requirements:
 3. An AWS account
 
 Run:
-Open file deploy.sh.
-In the section 'Parameters' enter parameters values
+In the file 'configuration.txt' enter parameters values
+Run file 'deploy.sh':
 ```
 ./deploy.sh
 ```
 
-Verify mail on aws
+Verify mail on aws (sender and receiver)
 1. Enter the Amazon SES Console
 2. Click Verify an Email Address
 3. You will receive a verification email

@@ -1,11 +1,7 @@
 #!/bin/bash
 
 # Parameters
-stage="prod"
-domain=""
-sender=""
-recipients=""
-
+source configuration.txt
 
 # Installation
 npm install -g serverless

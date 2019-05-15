@@ -73,7 +73,7 @@ curl -d '[       {
                   "type": "open-ended",
                   "content": "Are there areas of improvement that you would recommend for this individual that would help them to accomplish work more effectively?",
                   "required": false,
-                  "name": " areas-of-improvement",
+                  "name": "areas-of-improvement",
                   "answerType": null
                 },
                 {

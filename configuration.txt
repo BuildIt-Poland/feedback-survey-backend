@@ -1,0 +1,5 @@
+# Parameters
+stage="dev"
+domain="feedback-survey-dev.buildit.digital"
+sender=""
+recipients=""

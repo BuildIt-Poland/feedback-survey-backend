@@ -10,7 +10,7 @@ custom:
   answerTypeTableName: 'feedback_answer-type-${self:provider.stage}'
 
   customDomain:
-    domainName: 'feedback-survey-${self:provider.stage}.${opt:domain}'
+    domainName: '${opt:domain}'
     basePath: 'export'
     stage: ${self:provider.stage}
     createRoute53Record: true
