@@ -11,6 +11,6 @@ curl -d '{
                "sender":"'$sender'",
                "recipients":"'$recipients'",
                "subject":"Feedback on {employee_name} from {client_id}",
-               "bodyText":"Hi!\nThe client with ID: {client_id} just finished a survey about {employee_name}.\nPlease find attached results.\nCheers,\nSurveyBot"
+               "bodyText":"Hi!\nThe client with ID: {client_id} just finished a survey about {employee_name}.\nPlease find the attached results.\nCheers,\nSurveyBot"
           }' -H "Content-Type: application/json" -X POST $ADDRESS/saveEmail
 

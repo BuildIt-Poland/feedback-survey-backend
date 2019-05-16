@@ -3,8 +3,9 @@
 # Parameters
 source configuration.txt
 
-# Installation
-npm install -g serverless
+
+# Installation serverless
+sudo npm install -g serverless
 npm install --save-dev serverless-apigw-binary
 npm install serverless-domain-manager --save-dev
 

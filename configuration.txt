@@ -1,5 +1,9 @@
 # Parameters
-stage="dev"
-domain="feedback-survey-dev.buildit.digital"
-sender=""
-recipients=""
+
+stage="prod"
+domain="feedback-survey-prod.buildit.digital"
+
+# Email
+sender="sender@test.com"
+# Use a comma as a delimiter for recipients
+recipients="recipient1@test.com,recipient2@test.com"

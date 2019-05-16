@@ -10,7 +10,7 @@ custom:
   emailTableName: 'feedback_email-${self:provider.stage}'
 
   customDomain:
-    domainName: '${opt:domain}'
+    domainName: ${opt:domain}
     basePath: 'api'
     stage: ${self:provider.stage}
     createRoute53Record: true
@@ -55,6 +55,7 @@ package:
 functions:
   saveSurvey:
     handler: com.buildit.survey.SaveSurveyHandler
+    timeout: 30
     events:
       - http:
           path: /saveSurvey
