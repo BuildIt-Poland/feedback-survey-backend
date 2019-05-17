@@ -6,9 +6,14 @@ The data will be stored in a DynamoDB, and the service will be deployed to AWS.
 
 # Quick installation 
 ## Requirements:
-1. Java 8 (jdk 8)
-2. Node.js v6.5.0 or later
+1. Install jdk 8
+2. Install node and npm
 3. An AWS account
+4. Install the Serverless Framework installed with an AWS account set up
+```
+npm install -g serverless
+serverless config credentials --provider aws --key KEY --secret SECRET
+```
 
 ## Run:
 1. In the file 'configuration.txt' enter parameters values
