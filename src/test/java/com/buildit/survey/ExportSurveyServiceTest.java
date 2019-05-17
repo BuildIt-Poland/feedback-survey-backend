@@ -2,6 +2,7 @@ package com.buildit.survey;
 
 import com.buildit.question.Question;
 import com.buildit.question.QuestionDao;
+import com.buildit.question.QuestionTestData;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.junit.jupiter.api.Test;
@@ -31,6 +32,8 @@ class ExportSurveyServiceTest {
     @Mock
     private SurveyDao surveyDao;
 
+    private QuestionTestData testData = new QuestionTestData();
+
     @InjectMocks
     private ExportSurveyService testee;
 
@@ -38,7 +41,10 @@ class ExportSurveyServiceTest {
     void generateCSVFile() throws IOException {
         //GIVEN
         List<SurveyDTO> surveys = Arrays.asList(new SurveyTestData().prepareSurveyDTO(), new SurveyTestData().prepareSurveyDTO());
-        List<Question> questions = Arrays.asList(createQuestion(1L), createQuestion(2L), createQuestion(3L));
+        List<Question> questions = Arrays.asList(
+                testData.prepareQuestion(1L),
+                testData.prepareQuestion(2L),
+                testData.prepareQuestion(3L));
 
         //WHEN
         File file = testee.generateCSVFile(surveys, questions);
@@ -52,7 +58,10 @@ class ExportSurveyServiceTest {
     void exportToCSVFile() throws IOException {
         //GIVEN
         List<Survey> surveys = Arrays.asList(new SurveyTestData().prepareSurvey(), new SurveyTestData().prepareSurvey());
-        List<Question> questions = Arrays.asList(createQuestion(1L), createQuestion(2L), createQuestion(3L));
+        List<Question> questions = Arrays.asList(
+                testData.prepareQuestion(1L),
+                testData.prepareQuestion(2L),
+                testData.prepareQuestion(3L));
 
         //WHEN
         when(questionDao.getQuestions()).thenReturn(questions);
@@ -73,7 +82,10 @@ class ExportSurveyServiceTest {
     void generateCSVFileForSurvey() throws IOException {
         //GIVEN
         SurveyDTO survey = new SurveyTestData().prepareSurveyDTO();
-        List<Question> questions = Arrays.asList(createQuestion(1L), createQuestion(2L), createQuestion(3L));
+        List<Question> questions = Arrays.asList(
+                testData.prepareQuestion(1L),
+                testData.prepareQuestion(2L),
+                testData.prepareQuestion(3L));
 
         //WHEN
         when(questionDao.getQuestions()).thenReturn(questions);
@@ -108,14 +120,6 @@ class ExportSurveyServiceTest {
             assertEquals("answer 2", record.get("Question 2"));
             assertEquals("answer 3", record.get("Question 3"));
         }
-    }
-
-    private Question createQuestion(Long id) {
-        Question question = new Question();
-        question.setId(id.toString());
-        question.setContent("Question " + id);
-        question.setOrdinal(id);
-        return question;
     }
 
 }

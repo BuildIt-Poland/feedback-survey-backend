@@ -6,7 +6,7 @@ The data will be stored in a DynamoDB, and the service will be deployed to AWS.
 
 # Quick installation 
 ## Requirements:
-1. Java 8
+1. Java 8 (jdk 8)
 2. Node.js v6.5.0 or later
 3. An AWS account
 
@@ -23,6 +23,9 @@ The data will be stored in a DynamoDB, and the service will be deployed to AWS.
 3. You will receive a verification email
 
 [More about email verification, steps 1-2](https://aws.amazon.com/getting-started/tutorials/send-an-email/)
+
+
+------------------------------------------------------------------------------------------------------------------------
 
 # Development 
 ## Pre-requisites

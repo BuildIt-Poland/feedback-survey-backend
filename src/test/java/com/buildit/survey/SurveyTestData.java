@@ -26,7 +26,7 @@ class SurveyTestData {
 
     private Answer prepareAnswer(Long id) {
         Answer answer = new Answer();
-        answer.setQuestionId(String.valueOf(id));
+        answer.setQuestionName("Q" + id);
         answer.setAnswer("answer " + id);
         return answer;
     }

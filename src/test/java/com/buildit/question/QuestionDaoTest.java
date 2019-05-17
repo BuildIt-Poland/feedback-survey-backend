@@ -86,7 +86,7 @@ class QuestionDaoTest {
         //THEN
         verify(tableMapper).getDynamoDBMapper(Question.QUESTION_TABLE_NAME);
         assertEquals(1, questions.size());
-        assertEquals(question.getId(), questions.get(0).getId());
+        assertEquals(question.getName(), questions.get(0).getName());
     }
 
     @Test
@@ -120,7 +120,7 @@ class QuestionDaoTest {
         verify(tableMapper).getDynamoDBMapper(Question.QUESTION_TABLE_NAME);
         PaginatedList<Question> questions = questionDynamoDBMapper.scan(Question.class, new DynamoDBScanExpression());
         assertEquals(1, questions.size());
-        assertEquals(question.getId(), questions.get(0).getId());
+        assertEquals(question.getName(), questions.get(0).getName());
     }
 
 }

@@ -12,10 +12,14 @@ public class QuestionTestData {
     }
 
     public Question prepareQuestion() {
+        return prepareQuestion(1L);
+    }
+
+    public Question prepareQuestion(Long id) {
         Question question = new Question();
-        question.setId("1");
+        question.setName("Q" + id);
         question.setOrdinal(11L);
-        question.setContent("Question 1.");
+        question.setContent("Question " + id);
         question.setAnswerType("kindOfFeedback");
         return question;
     }

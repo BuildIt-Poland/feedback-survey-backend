@@ -81,10 +81,10 @@ class ExportSurveyService {
 
     private List<String> getAnswers(SurveyDTO survey, List<Question> questions) {
         Map<String, String> answerForQuestion = survey.getAnswers().stream()
-                .collect(Collectors.toMap(Answer::getQuestionId, Answer::getAnswer));
+                .collect(Collectors.toMap(Answer::getQuestionName, Answer::getAnswer));
 
         return questions.stream()
-                .map(question -> answerForQuestion.get(question.getId()))
+                .map(question -> answerForQuestion.get(question.getName()))
                 .collect(Collectors.toList());
     }
 

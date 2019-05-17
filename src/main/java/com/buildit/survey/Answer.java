@@ -6,16 +6,16 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBDocument;
 @DynamoDBDocument
 public class Answer {
 
-    private String questionId;
+    private String questionName;
 
     private String answer;
 
-    public String getQuestionId() {
-        return questionId;
+    public String getQuestionName() {
+        return questionName;
     }
 
-    public void setQuestionId(String questionId) {
-        this.questionId = questionId;
+    public void setQuestionName(String questionName) {
+        this.questionName = questionName;
     }
 
     public String getAnswer() {
@@ -29,7 +29,7 @@ public class Answer {
     @Override
     public String toString() {
         return "Answer{" +
-                "questionId='" + questionId + '\'' +
+                "questionName='" + questionName + '\'' +
                 ", answer='" + answer + '\'' +
                 '}';
     }

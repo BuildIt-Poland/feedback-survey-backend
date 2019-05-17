@@ -9,7 +9,7 @@ public class Question {
 
     public static final String QUESTION_TABLE_NAME = System.getenv("QUESTION_TABLE_NAME");
 
-    private String id;
+    private String name;
 
     private Long ordinal;
 
@@ -19,17 +19,15 @@ public class Question {
 
     private boolean required;
 
-    private String name;
-
     private String answerType;
 
     @DynamoDBHashKey
-    public String getId() {
-        return id;
+    public String getName() {
+        return name;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setName(String name) {
+        this.name = name;
     }
 
     @DynamoDBRangeKey
@@ -63,14 +61,6 @@ public class Question {
 
     public void setRequired(boolean required) {
         this.required = required;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getAnswerType() {

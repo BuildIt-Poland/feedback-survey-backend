@@ -112,12 +112,12 @@ resources:
       Properties:
         TableName: ${self:custom.questionTableName}
         AttributeDefinitions:
-          - AttributeName: id
+          - AttributeName: name
             AttributeType: S
           - AttributeName: ordinal
             AttributeType: N
         KeySchema:
-          - AttributeName: id
+          - AttributeName: name
             KeyType: HASH
           - AttributeName: ordinal
             KeyType: RANGE
