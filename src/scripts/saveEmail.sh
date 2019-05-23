@@ -12,7 +12,7 @@ echo "save email"
   \"sender\":\"$sender\",
   \"recipients\":\"$recipients\",
   \"subject\":\"Feedback on {employee_name} from {client_id}\",
-  \"bodyHtml\":\"<p>Hi!</p><p>The client with ID: {client_id} just finished a survey about {employee_name}.<br/>Please find the attached results.</p><p>Cheers,<br/>SurveyBot</p>\"
+  \"bodyHtml\":\"<p>Hi!<br/>The client with ID: {client_id} just finished a survey about {employee_name}.<br/>Please find the attached results.</p><p>Cheers,<br/>SurveyBot</p>\"
   }"
 
 
