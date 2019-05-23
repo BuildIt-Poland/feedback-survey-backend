@@ -1,16 +1,25 @@
 #! /bin/bash
 
 ADDRESS=$1
-sender=$2
-recipients=$3
+region=$2
+awsKey=$3
+sender=$4
+recipients=$5
 
 echo "save email"
 
-curl -d '{
-               "id":"1",
-               "sender":"'$sender'",
-               "recipients":"'$recipients'",
-               "subject":"Feedback on {employee_name} from {client_id}",
-               "bodyText":"Hi!\nThe client with ID: {client_id} just finished a survey about {employee_name}.\nPlease find the attached results.\nCheers,\nSurveyBot"
-          }' -H "Content-Type: application/json" -X POST $ADDRESS/saveEmail
+  body="{\"id\":\"1\",
+  \"sender\":\"$sender\",
+  \"recipients\":\"$recipients\",
+  \"subject\":\"Feedback on {employee_name} from {client_id}\",
+  \"bodyHtml\":\"<p>Hi!</p><p>The client with ID: {client_id} just finished a survey about {employee_name}.<br/>Please find the attached results.</p><p>Cheers,<br/>SurveyBot</p>\"
+  }"
+
+
+    bash invoke.sh \
+        POST \
+        $awsKey \
+        $ADDRESS/saveEmail \
+        "${body}" \
+        $region
 

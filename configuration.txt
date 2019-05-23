@@ -2,6 +2,10 @@
 
 stage="prod"
 domain="feedback-survey-prod.buildit.digital"
+region="us-east-1"
+
+#aws_access_key_id:aws_secret_access_key
+awsKey="aws_access_key_id:aws_secret_access_key"
 
 # Email
 sender="sender@test.com"

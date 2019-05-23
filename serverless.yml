@@ -19,7 +19,7 @@ provider:
   name: aws
   runtime: java8
   stage: ${opt:stage, 'dev'}
-  region: us-east-1
+  region: ${opt:region, 'us-east-1'}
 
   iamRoleStatements:
     - Effect: "Allow"
@@ -76,6 +76,7 @@ functions:
       - http:
           path: /saveQuestions
           method: post
+          authorizer: aws_iam
 
   saveAnswerTypes:
     handler: com.buildit.question.SaveAnswerTypesHandler
@@ -83,6 +84,7 @@ functions:
       - http:
           path: /saveAnswerTypes
           method: post
+          authorizer: aws_iam
 
   saveEmail:
     handler: com.buildit.email.SaveEmailHandler
@@ -90,6 +92,7 @@ functions:
       - http:
           path: /saveEmail
           method: post
+          authorizer: aws_iam
 
 resources:
   Resources:

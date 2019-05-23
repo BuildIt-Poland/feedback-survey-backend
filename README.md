@@ -7,7 +7,7 @@ The data will be stored in a DynamoDB, and the service will be deployed to AWS.
 # Quick installation 
 ## Requirements:
 1. Install jdk 8
-2. Install node and npm
+2. Install node (v6.5.0 or later) and npm
 3. An AWS account
 4. Install the Serverless Framework installed with an AWS account set up
 ```
@@ -93,3 +93,6 @@ If you in the project directory
 https://serverless.com/framework/docs/providers/aws/guide/quick-start/
 
 https://serverless.com/blog/how-to-create-a-rest-api-in-java-using-dynamodb-and-serverless/
+
+## Instruction how to update the configuration in database
+/documentation/dynamoDB.docx
