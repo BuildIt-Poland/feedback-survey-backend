@@ -51,7 +51,7 @@ class ExportSurveyServiceTest {
 
         //THEN
         assertTrue(file.exists());
-        verifyFileContent(file, "Joanna");
+        verifyFileContent(file);
     }
 
     @Test
@@ -74,7 +74,7 @@ class ExportSurveyServiceTest {
         verify(surveyDao).getAll();
 
         File file = createFile(fileContent);
-        verifyFileContent(file, "");
+        verifyFileContent(file);
     }
 
 
@@ -94,7 +94,7 @@ class ExportSurveyServiceTest {
 
         //THEN
         assertTrue(file.exists());
-        verifyFileContent(file, "Joanna");
+        verifyFileContent(file);
     }
 
     private File createFile(byte[] fileContent) throws IOException {
@@ -105,7 +105,7 @@ class ExportSurveyServiceTest {
         return file;
     }
 
-    private void verifyFileContent(File file, String employeeName) throws IOException {
+    private void verifyFileContent(File file) throws IOException {
         Reader in = new FileReader(file.getPath());
         Iterable<CSVRecord> records = CSVFormat.DEFAULT
                 .withFirstRecordAsHeader()
@@ -114,7 +114,7 @@ class ExportSurveyServiceTest {
         for (CSVRecord record : records) {
             assertEquals(6, record.size());
             assertEquals("surveyId", record.get("Id"));
-            assertEquals(employeeName, record.get("Employee name"));
+            assertEquals("Joanna", record.get("Employee name"));
             assertEquals("2019-04-22 11:22:33", record.get("Date"));
             assertEquals("answer 1", record.get("Question 1"));
             assertEquals("answer 2", record.get("Question 2"));

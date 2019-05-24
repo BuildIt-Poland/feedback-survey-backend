@@ -11,6 +11,7 @@ class SurveyTestData {
         survey.setSurveyId("surveyId");
         survey.setSavedDate(LocalDateTime.of(2019, 4, 22, 11, 22, 33, 44));
         survey.setAnswers(Arrays.asList(prepareAnswer(1L), prepareAnswer(2L), prepareAnswer(3L)));
+        survey.setEmployeeName("Joanna");
         return survey;
     }
 

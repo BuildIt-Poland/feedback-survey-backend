@@ -72,6 +72,6 @@ class ExportSurveysHandlerTest {
         assertTrue(response.isIsBase64Encoded());
         String fileContent = new String(Base64.getDecoder().decode(response.getBody()));
         assertTrue(fileContent.contains("Id,Employee name,Date,Question 1"));
-        assertTrue(fileContent.contains("surveyId,,2019-04-22 11:22:33,answer 1"));
+        assertTrue(fileContent.contains("surveyId,Joanna,2019-04-22 11:22:33,answer 1"));
     }
 }
