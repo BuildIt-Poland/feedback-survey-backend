@@ -49,6 +49,7 @@ package:
 functions:
   exportSurvey:
     handler: com.buildit.survey.ExportSurveysHandler
+    timeout: 30
     events:
       - http:
           path: /exportSurveys
