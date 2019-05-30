@@ -6,8 +6,8 @@ echo "save questions"
 
 body="[       {
                   \"ordinal\": 4,
-                  \"type\": \"select\",
-                  \"content\": \"What kind of feedback are you providing?\",
+                  \"type\": \"radio\",
+                  \"content\": \"What frequency of performance feedback are you providing?\",
                   \"required\": true,
                   \"name\": \"kind-of-feedback\",
                   \"answerType\": \"kindOfFeedback\"
