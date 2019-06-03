@@ -15,7 +15,7 @@ body="[       {
                 {
                   \"ordinal\": 5,
                   \"type\": \"radio\",
-                  \"content\": \"Please state if you would like this feedback directly to be shared with the individual\",
+                  \"content\": \"Would you like this feedback to be shared directly with the individual?\",
                   \"required\": true,
                   \"name\": \"shared\",
                   \"answerType\": \"yesNo\"
@@ -23,7 +23,7 @@ body="[       {
                 {
                   \"ordinal\": 6,
                   \"type\": \"radio\",
-                  \"content\": \"Please state if you would like to receive copy of this feedback\",
+                  \"content\": \"Would you like to receive a copy of this feedback?\",
                   \"required\": true,
                   \"name\": \"receive-copy\",
                   \"answerType\": \"yesNo\"
