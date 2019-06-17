@@ -5,7 +5,7 @@ source configuration.txt
 
 
 # Build project
-#./mvnw clean install
+./mvnw clean install
 
 
 # Deploy the Service 'feedback-survey'
