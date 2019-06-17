@@ -19,21 +19,11 @@ serverless create_domain
 
 # Deploy the Service 'feedback-survey'
 echo "Deploy 'feedback-survey'"
-sls deploy --stage $stage --domain $domain --region $region
+sls deploy --stage $stage --domain $customDomain --region $region
 
 
 # Deploy Service 'feedback-survey-export'
 echo "Deploy 'feedback-survey-export'"
 cd export
-sls deploy --stage $stage --domain $domain --region $region
+sls deploy --stage $stage --domain $customDomain --region $region
 cd ..
-
-
-# Initial data
-cd src/scripts
-ADDRESS="https://$domain/api"
-./saveAnswerTypes.sh $ADDRESS $region $awsKey
-echo ""
-./saveQuestions.sh $ADDRESS $region $awsKey
-echo ""
-./saveEmail.sh $ADDRESS $region $awsKey $sender $recipients
