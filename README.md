@@ -16,14 +16,14 @@ The data will be stored in a DynamoDB, and the service will be deployed to AWS.
 ## Run:
 1. In the file 'configuration.txt' enter parameters values
 2. Run script 'deployCloudFormation.sh':
-```
-./deployCloudFormation.sh
-```
-Initialization of custom domain can take up to 40 minutes. Please wait before you go to step 3.
+   ```
+   ./deployCloudFormation.sh
+   ```
+   Initialization of custom domain can take up to 40 minutes. Please wait before you go to step 3.
 3. Run script 'initValues.sh'
-```
-./initValues.sh
-```
+   ```
+   ./initValues.sh
+   ```
 
 ## Verify mail on aws (sender and receiver)
 1. Enter the Amazon SES Console
@@ -40,22 +40,22 @@ Initialization of custom domain can take up to 40 minutes. Please wait before yo
 2. Install node (v6.5.0 or later) and npm
 3. An AWS account
 4. Install the Serverless Framework installed with an AWS account set up
-```
-npm install -g serverless
-serverless config credentials --provider aws --key KEY --secret SECRET
-```
+   ```
+   npm install -g serverless
+   serverless config credentials --provider aws --key KEY --secret SECRET
+   ```
 
 ## Run:
 1. In the file 'configuration.txt' enter parameters values
 2. Run file 'deploy.sh':
-```
-./deploy.sh
-```
-Initialization of custom domain can take up to 40 minutes. Please wait before you go to step 3.
+   ```
+   ./deploy.sh
+   ```
+    Initialization of custom domain can take up to 40 minutes. Please wait before you go to step 3.
 3. Run script 'initValues.sh'
-```
-./initValues.sh
-```
+   ```
+   ./initValues.sh
+   ```
 
 ## Verify mail on aws (sender and receiver)
 1. Enter the Amazon SES Console
