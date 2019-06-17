@@ -6,7 +6,35 @@ The data will be stored in a DynamoDB, and the service will be deployed to AWS.
 ![AWS diagram](documentation/aws-diagram.png?raw=true "AWS diagram")
 
 
-# Quick installation 
+# Install using AWS CLI
+## Requirements:
+1. jdk 8
+2. An AWS account
+3. AWS CLI
+4. Registered domain
+
+## Run:
+1. In the file 'configuration.txt' enter parameters values
+2. Run script 'deployCloudFormation.sh':
+```
+./deployCloudFormation.sh
+```
+Initialization of custom domain can take up to 40 minutes. Please wait before you go to step 3.
+3. Run script 'initValues.sh'
+```
+./initValues.sh
+```
+
+## Verify mail on aws (sender and receiver)
+1. Enter the Amazon SES Console
+2. Click Verify an Email Address
+3. You will receive a verification email
+
+[More about email verification, steps 1-2](https://aws.amazon.com/getting-started/tutorials/send-an-email/)
+
+------------------------------------------------------------------------------------------------------------------------
+
+# An Alternative installation, install using serverless 
 ## Requirements:
 1. Install jdk 8
 2. Install node (v6.5.0 or later) and npm
@@ -22,6 +50,11 @@ serverless config credentials --provider aws --key KEY --secret SECRET
 2. Run file 'deploy.sh':
 ```
 ./deploy.sh
+```
+Initialization of custom domain can take up to 40 minutes. Please wait before you go to step 3.
+3. Run script 'initValues.sh'
+```
+./initValues.sh
 ```
 
 ## Verify mail on aws (sender and receiver)
