@@ -8,8 +8,11 @@ The data will be stored in a DynamoDB, and the service will be deployed to AWS.
 
 # Install using AWS console
 1. Create new bucket and upload feedback-survey-1.jar (you can find jar in folder 'output' or build yourself)
+
 2. Create new stack and upload template feedback-survey-template.yml
+
    Initialization of custom domain can take up to 40 minutes. Please wait before you go to step 3.
+   
 3. Run script 'initValues.sh'
    ```
    ./initValues.sh
