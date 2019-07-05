@@ -4,31 +4,66 @@ Description: The AWS CloudFormation template for this Serverless application
 Parameters:
   Stage:
     Type: String
-    Default: dev
+    Default: prod
   surveyTableName:
     Type: String
+    Default: feedback_survey-prod
   questionTableName:
     Type: String
+    Default: feedback_question-prod
   answerTypeTableName:
     Type: String
+    Default: feedback_answer-type-prod
   emailTableName:
     Type: String
+    Default: feedback_email-prod
   domain:
     Type: String
+    Default: buildit.digital
   customDomain:
     Type: String
+    Default: feedback-survey-prod.buildit.digital
+  #You can check your certificate for domain here: https://console.aws.amazon.com/acm/
+  #certificateArn="arn:aws:acm:us-east-1:..."
   certificateArn:
     Type: String
+    Default:
+  bucketName:
+    Type: String
+    Default: feedback-survey-serverlessdeploymentbucket-prod
+  saveSurveyFunctionName:
+    Type: String
+    Default: feedback-survey-prod-saveSurvey
+  getQuestionsFunctionName:
+    Type: String
+    Default: feedback-survey-prod-getQuestions
+  saveQuestionsFunctionName:
+    Type: String
+    Default: feedback-survey-prod-saveQuestions
+  saveAnswerTypesFunctionName:
+    Type: String
+    Default: feedback-survey-prod-saveAnswerTypes
+  saveEmailFunctionName:
+    Type: String
+    Default: feedback-survey-prod-saveEmail
+  exportSurveyFunctionName:
+    Type: String
+    Default: feedback-survey-prod-exportSurvey
+  policyName:
+    Type: String
+    Default: prod-feedback-survey-lambda
+  apiGatewayRestApiName:
+    Type: String
+    Default: prod-feedback-survey
+  apiGatewayExportRestApiName:
+    Type: String
+    Default: prod-feedback-survey-export
 
 Resources:
   ServerlessDeploymentBucket:
     Type: 'AWS::S3::Bucket'
     Properties:
-      BucketName: !Join
-        - ''
-        - - 'feedback-survey-'
-          - !Ref Stage
-          - '-serverlessdeploymentbucket'
+      BucketName: !Ref bucketName
       BucketEncryption:
         ServerSideEncryptionConfiguration:
           - ServerSideEncryptionByDefault:
@@ -38,49 +73,43 @@ Resources:
     Properties:
       LogGroupName: !Join
         - ''
-        - - '/aws/lambda/feedback-survey-'
-          - !Ref Stage
-          - '-saveSurvey'
+        - - '/aws/lambda/'
+          - !Ref saveSurveyFunctionName
   GetQuestionsLogGroup:
     Type: 'AWS::Logs::LogGroup'
     Properties:
       LogGroupName: !Join
         - ''
-        - - '/aws/lambda/feedback-survey-'
-          - !Ref Stage
-          - '-getQuestions'
+        - - '/aws/lambda/'
+          - !Ref getQuestionsFunctionName
   SaveQuestionsLogGroup:
     Type: 'AWS::Logs::LogGroup'
     Properties:
       LogGroupName: !Join
         - ''
-        - - '/aws/lambda/feedback-survey-'
-          - !Ref Stage
-          - '-saveQuestions'
+        - - '/aws/lambda/'
+          - !Ref saveQuestionsFunctionName
   SaveAnswerTypesLogGroup:
     Type: 'AWS::Logs::LogGroup'
     Properties:
       LogGroupName: !Join
         - ''
-        - - '/aws/lambda/feedback-survey-'
-          - !Ref Stage
-          - '-saveAnswerTypes'
+        - - '/aws/lambda/'
+          - !Ref saveAnswerTypesFunctionName
   SaveEmailLogGroup:
     Type: 'AWS::Logs::LogGroup'
     Properties:
       LogGroupName: !Join
         - ''
-        - - '/aws/lambda/feedback-survey-'
-          - !Ref Stage
-          - '-saveEmail'
+        - - '/aws/lambda/'
+          - !Ref saveEmailFunctionName
   ExportSurveyLogGroup:
     Type: 'AWS::Logs::LogGroup'
     Properties:
       LogGroupName: !Join
         - ''
-        - - '/aws/lambda/feedback-survey-'
-          - !Ref Stage
-          - '-exportSurvey'
+        - - '/aws/lambda/'
+          - !Ref exportSurveyFunctionName
 
   IamRoleLambdaExecution:
     Type: 'AWS::IAM::Role'
@@ -95,11 +124,7 @@ Resources:
             Action:
               - 'sts:AssumeRole'
       Policies:
-        - PolicyName: !Join
-            - '-'
-            - - !Ref Stage
-              - feedback-survey
-              - lambda
+        - PolicyName: !Ref policyName
           PolicyDocument:
             Version: 2012-10-17
             Statement:
@@ -146,11 +171,7 @@ Resources:
   SaveSurveyLambdaFunction:
     Type: 'AWS::Serverless::Function'
     Properties:
-      FunctionName: !Join
-        - ''
-        - - 'feedback-survey-'
-          - !Ref Stage
-          - '-saveSurvey'
+      FunctionName: !Ref saveSurveyFunctionName
       Handler: com.buildit.survey.SaveSurveyHandler
       MemorySize: 1024
       Role: !GetAtt
@@ -171,11 +192,7 @@ Resources:
   GetQuestionsLambdaFunction:
     Type: 'AWS::Serverless::Function'
     Properties:
-      FunctionName: !Join
-        - ''
-        - - 'feedback-survey-'
-          - !Ref Stage
-          - '-getQuestions'
+      FunctionName: !Ref getQuestionsFunctionName
       Handler: com.buildit.question.GetQuestionsHandler
       MemorySize: 1024
       Role: !GetAtt
@@ -196,11 +213,7 @@ Resources:
   SaveQuestionsLambdaFunction:
     Type: 'AWS::Serverless::Function'
     Properties:
-      FunctionName: !Join
-        - ''
-        - - 'feedback-survey-'
-          - !Ref Stage
-          - '-saveQuestions'
+      FunctionName: !Ref saveQuestionsFunctionName
       Handler: com.buildit.question.SaveQuestionsHandler
       MemorySize: 1024
       Role: !GetAtt
@@ -221,11 +234,7 @@ Resources:
   SaveAnswerTypesLambdaFunction:
     Type: 'AWS::Serverless::Function'
     Properties:
-      FunctionName: !Join
-        - ''
-        - - 'feedback-survey-'
-          - !Ref Stage
-          - '-saveAnswerTypes'
+      FunctionName: !Ref saveAnswerTypesFunctionName
       Handler: com.buildit.question.SaveAnswerTypesHandler
       MemorySize: 1024
       Role: !GetAtt
@@ -246,11 +255,7 @@ Resources:
   SaveEmailLambdaFunction:
     Type: 'AWS::Serverless::Function'
     Properties:
-      FunctionName: !Join
-        - ''
-        - - 'feedback-survey-'
-          - !Ref Stage
-          - '-saveEmail'
+      FunctionName: !Ref saveEmailFunctionName
       Handler: com.buildit.email.SaveEmailHandler
       MemorySize: 1024
       Role: !GetAtt
@@ -271,11 +276,7 @@ Resources:
   ExportSurveyLambdaFunction:
     Type: 'AWS::Serverless::Function'
     Properties:
-      FunctionName: !Join
-        - ''
-        - - 'feedback-survey-'
-          - !Ref Stage
-          - '-exportSurvey'
+      FunctionName: !Ref exportSurveyFunctionName
       Handler: com.buildit.survey.ExportSurveysHandler
       MemorySize: 1024
       Role:
@@ -298,10 +299,7 @@ Resources:
   ApiGatewayRestApi:
     Type: 'AWS::ApiGateway::RestApi'
     Properties:
-      Name: !Join
-        - ''
-        - - !Ref Stage
-          - '-feedback-survey'
+      Name: !Ref apiGatewayRestApiName
       EndpointConfiguration:
         Types:
           - EDGE
@@ -669,10 +667,7 @@ Resources:
   ApiGatewayExportRestApi:
     Type: 'AWS::ApiGateway::RestApi'
     Properties:
-      Name: !Join
-        - ''
-        - - !Ref Stage
-          - '-feedback-survey-export'
+      Name: !Ref apiGatewayExportRestApiName
       EndpointConfiguration:
         Types:
           - EDGE
@@ -799,10 +794,7 @@ Resources:
   surveyTable:
     Type: 'AWS::DynamoDB::Table'
     Properties:
-      TableName: !Join
-        - ''
-        - - 'feedback_survey-'
-          - !Ref Stage
+      TableName: !Ref surveyTableName
       AttributeDefinitions:
         - AttributeName: id
           AttributeType: S
@@ -815,10 +807,7 @@ Resources:
   questionTable:
     Type: 'AWS::DynamoDB::Table'
     Properties:
-      TableName: !Join
-        - ''
-        - - 'feedback_question-'
-          - !Ref Stage
+      TableName: !Ref questionTableName
       AttributeDefinitions:
         - AttributeName: name
           AttributeType: S
@@ -835,10 +824,7 @@ Resources:
   answerTypeTable:
     Type: 'AWS::DynamoDB::Table'
     Properties:
-      TableName: !Join
-        - ''
-        - - 'feedback_answer-type-'
-          - !Ref Stage
+      TableName: !Ref answerTypeTableName
       AttributeDefinitions:
         - AttributeName: type
           AttributeType: S
@@ -851,10 +837,7 @@ Resources:
   emailTable:
     Type: 'AWS::DynamoDB::Table'
     Properties:
-      TableName: !Join
-        - ''
-        - - 'feedback_email-'
-          - !Ref Stage
+      TableName: !Ref emailTableName
       AttributeDefinitions:
         - AttributeName: id
           AttributeType: 'N'

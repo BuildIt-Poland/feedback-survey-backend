@@ -1,0 +1,1043 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: The AWS CloudFormation template for this Serverless application
+Parameters:
+  Stage:
+    Type: String
+    Default: prod
+  surveyTableName:
+    Type: String
+    Default: feedback_survey-prod
+  questionTableName:
+    Type: String
+    Default: feedback_question-prod
+  answerTypeTableName:
+    Type: String
+    Default: feedback_answer-type-prod
+  emailTableName:
+    Type: String
+    Default: feedback_email-prod
+  domain:
+    Type: String
+    Default: buildit.digital
+  customDomain:
+    Type: String
+    Default: feedback-survey-prod.buildit.digital
+  #You can check your certificate for domain here: https://console.aws.amazon.com/acm/
+  #certificateArn="arn:aws:acm:us-east-1:..."
+  certificateArn:
+    Type: String
+    Default:
+  bucketName:
+    Type: String
+    Default: feedback-survey-serverlessdeploymentbucket-prod
+  saveSurveyFunctionName:
+    Type: String
+    Default: feedback-survey-prod-saveSurvey
+  getQuestionsFunctionName:
+    Type: String
+    Default: feedback-survey-prod-getQuestions
+  saveQuestionsFunctionName:
+    Type: String
+    Default: feedback-survey-prod-saveQuestions
+  saveAnswerTypesFunctionName:
+    Type: String
+    Default: feedback-survey-prod-saveAnswerTypes
+  saveEmailFunctionName:
+    Type: String
+    Default: feedback-survey-prod-saveEmail
+  exportSurveyFunctionName:
+    Type: String
+    Default: feedback-survey-prod-exportSurvey
+  policyName:
+    Type: String
+    Default: prod-feedback-survey-lambda
+  apiGatewayRestApiName:
+    Type: String
+    Default: prod-feedback-survey
+  apiGatewayExportRestApiName:
+    Type: String
+    Default: prod-feedback-survey-export
+  bucketWithSourceName:
+    Type: String
+    Default: feedback-survey-prod
+  codeKey:
+    Type: String
+    Default: feedback-survey-1.jar
+Resources:
+  ServerlessDeploymentBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName:
+        Ref: bucketName
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+  SaveSurveyLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName:
+        Fn::Join:
+          - ''
+          - - /aws/lambda/
+            - Ref: saveSurveyFunctionName
+  GetQuestionsLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName:
+        Fn::Join:
+          - ''
+          - - /aws/lambda/
+            - Ref: getQuestionsFunctionName
+  SaveQuestionsLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName:
+        Fn::Join:
+          - ''
+          - - /aws/lambda/
+            - Ref: saveQuestionsFunctionName
+  SaveAnswerTypesLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName:
+        Fn::Join:
+          - ''
+          - - /aws/lambda/
+            - Ref: saveAnswerTypesFunctionName
+  SaveEmailLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName:
+        Fn::Join:
+          - ''
+          - - /aws/lambda/
+            - Ref: saveEmailFunctionName
+  ExportSurveyLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName:
+        Fn::Join:
+          - ''
+          - - /aws/lambda/
+            - Ref: exportSurveyFunctionName
+  IamRoleLambdaExecution:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Policies:
+        - PolicyName:
+            Ref: policyName
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: '*'
+              - Effect: Allow
+                Action:
+                  - dynamodb:Query
+                  - dynamodb:Scan
+                  - dynamodb:GetItem
+                  - dynamodb:PutItem
+                  - dynamodb:UpdateItem
+                  - dynamodb:DeleteItem
+                Resource:
+                  - Fn::GetAtt:
+                      - surveyTable
+                      - Arn
+                  - Fn::GetAtt:
+                      - questionTable
+                      - Arn
+                  - Fn::GetAtt:
+                      - answerTypeTable
+                      - Arn
+                  - Fn::GetAtt:
+                      - emailTable
+                      - Arn
+              - Effect: Allow
+                Action:
+                  - ses:SendEmail
+                  - ses:SendRawEmail
+                Resource: '*'
+      Path: /
+      RoleName:
+        Fn::Join:
+          - '-'
+          - - feedback-survey
+            - Ref: Stage
+            - Ref: AWS::Region
+            - lambdaRole
+  SaveSurveyLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:
+        Ref: saveSurveyFunctionName
+      Handler: com.buildit.survey.SaveSurveyHandler
+      MemorySize: 1024
+      Role:
+        Fn::GetAtt:
+          - IamRoleLambdaExecution
+          - Arn
+      Runtime: java8
+      Code:
+        S3Bucket:
+          Ref: bucketWithSourceName
+        S3Key:
+          Ref: codeKey
+      Timeout: 30
+      Environment:
+        Variables:
+          SURVEY_TABLE_NAME:
+            Ref: surveyTableName
+          QUESTION_TABLE_NAME:
+            Ref: questionTableName
+          ANSWER_TYPE_TABLE_NAME:
+            Ref: answerTypeTableName
+          EMAIL_TABLE_NAME:
+            Ref: emailTableName
+    DependsOn:
+      - SaveSurveyLogGroup
+      - IamRoleLambdaExecution
+  GetQuestionsLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:
+        Ref: getQuestionsFunctionName
+      Handler: com.buildit.question.GetQuestionsHandler
+      MemorySize: 1024
+      Role:
+        Fn::GetAtt:
+          - IamRoleLambdaExecution
+          - Arn
+      Runtime: java8
+      Code:
+        S3Bucket:
+          Ref: bucketWithSourceName
+        S3Key:
+          Ref: codeKey
+      Timeout: 6
+      Environment:
+        Variables:
+          SURVEY_TABLE_NAME:
+            Ref: surveyTableName
+          QUESTION_TABLE_NAME:
+            Ref: questionTableName
+          ANSWER_TYPE_TABLE_NAME:
+            Ref: answerTypeTableName
+          EMAIL_TABLE_NAME:
+            Ref: emailTableName
+    DependsOn:
+      - GetQuestionsLogGroup
+      - IamRoleLambdaExecution
+  SaveQuestionsLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:
+        Ref: saveQuestionsFunctionName
+      Handler: com.buildit.question.SaveQuestionsHandler
+      MemorySize: 1024
+      Role:
+        Fn::GetAtt:
+          - IamRoleLambdaExecution
+          - Arn
+      Runtime: java8
+      Code:
+        S3Bucket:
+          Ref: bucketWithSourceName
+        S3Key:
+          Ref: codeKey
+      Timeout: 6
+      Environment:
+        Variables:
+          SURVEY_TABLE_NAME:
+            Ref: surveyTableName
+          QUESTION_TABLE_NAME:
+            Ref: questionTableName
+          ANSWER_TYPE_TABLE_NAME:
+            Ref: answerTypeTableName
+          EMAIL_TABLE_NAME:
+            Ref: emailTableName
+    DependsOn:
+      - SaveQuestionsLogGroup
+      - IamRoleLambdaExecution
+  SaveAnswerTypesLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:
+        Ref: saveAnswerTypesFunctionName
+      Handler: com.buildit.question.SaveAnswerTypesHandler
+      MemorySize: 1024
+      Role:
+        Fn::GetAtt:
+          - IamRoleLambdaExecution
+          - Arn
+      Runtime: java8
+      Code:
+        S3Bucket:
+          Ref: bucketWithSourceName
+        S3Key:
+          Ref: codeKey
+      Timeout: 6
+      Environment:
+        Variables:
+          SURVEY_TABLE_NAME:
+            Ref: surveyTableName
+          QUESTION_TABLE_NAME:
+            Ref: questionTableName
+          ANSWER_TYPE_TABLE_NAME:
+            Ref: answerTypeTableName
+          EMAIL_TABLE_NAME:
+            Ref: emailTableName
+    DependsOn:
+      - SaveAnswerTypesLogGroup
+      - IamRoleLambdaExecution
+  SaveEmailLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:
+        Ref: saveEmailFunctionName
+      Handler: com.buildit.email.SaveEmailHandler
+      MemorySize: 1024
+      Role:
+        Fn::GetAtt:
+          - IamRoleLambdaExecution
+          - Arn
+      Runtime: java8
+      Code:
+        S3Bucket:
+          Ref: bucketWithSourceName
+        S3Key:
+          Ref: codeKey
+      Timeout: 6
+      Environment:
+        Variables:
+          SURVEY_TABLE_NAME:
+            Ref: surveyTableName
+          QUESTION_TABLE_NAME:
+            Ref: questionTableName
+          ANSWER_TYPE_TABLE_NAME:
+            Ref: answerTypeTableName
+          EMAIL_TABLE_NAME:
+            Ref: emailTableName
+    DependsOn:
+      - SaveEmailLogGroup
+      - IamRoleLambdaExecution
+  ExportSurveyLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName:
+        Ref: exportSurveyFunctionName
+      Handler: com.buildit.survey.ExportSurveysHandler
+      MemorySize: 1024
+      Role:
+        Fn::GetAtt:
+          - IamRoleLambdaExecution
+          - Arn
+      Runtime: java8
+      Code:
+        S3Bucket:
+          Ref: bucketWithSourceName
+        S3Key:
+          Ref: codeKey
+      Timeout: 30
+      Environment:
+        Variables:
+          SURVEY_TABLE_NAME:
+            Ref: surveyTableName
+          QUESTION_TABLE_NAME:
+            Ref: questionTableName
+          ANSWER_TYPE_TABLE_NAME:
+            Ref: answerTypeTableName
+          EMAIL_TABLE_NAME:
+            Ref: emailTableName
+    DependsOn:
+      - ExportSurveyLogGroup
+      - IamRoleLambdaExecution
+  ApiGatewayRestApi:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name:
+        Ref: apiGatewayRestApiName
+      EndpointConfiguration:
+        Types:
+          - EDGE
+  ApiGatewayResourceSavesurvey:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId:
+        Fn::GetAtt:
+          - ApiGatewayRestApi
+          - RootResourceId
+      PathPart: saveSurvey
+      RestApiId:
+        Ref: ApiGatewayRestApi
+  ApiGatewayResourceGetquestions:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId:
+        Fn::GetAtt:
+          - ApiGatewayRestApi
+          - RootResourceId
+      PathPart: getQuestions
+      RestApiId:
+        Ref: ApiGatewayRestApi
+  ApiGatewayResourceSavequestions:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId:
+        Fn::GetAtt:
+          - ApiGatewayRestApi
+          - RootResourceId
+      PathPart: saveQuestions
+      RestApiId:
+        Ref: ApiGatewayRestApi
+  ApiGatewayResourceSaveanswertypes:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId:
+        Fn::GetAtt:
+          - ApiGatewayRestApi
+          - RootResourceId
+      PathPart: saveAnswerTypes
+      RestApiId:
+        Ref: ApiGatewayRestApi
+  ApiGatewayResourceSaveemail:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId:
+        Fn::GetAtt:
+          - ApiGatewayRestApi
+          - RootResourceId
+      PathPart: saveEmail
+      RestApiId:
+        Ref: ApiGatewayRestApi
+  ApiGatewayMethodSavesurveyOptions:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: NONE
+      HttpMethod: OPTIONS
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Credentials: true
+          ResponseModels: {}
+      RequestParameters: {}
+      Integration:
+        Type: MOCK
+        RequestTemplates:
+          application/json: '{statusCode:200}'
+        ContentHandling: CONVERT_TO_TEXT
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: '''*'''
+              method.response.header.Access-Control-Allow-Headers: '''Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'''
+              method.response.header.Access-Control-Allow-Methods: '''OPTIONS,POST'''
+              method.response.header.Access-Control-Allow-Credentials: '''false'''
+            ResponseTemplates:
+              application/json: '#set($origin = $input.params("Origin"))
+
+              #if($origin == "") #set($origin = $input.params("origin")) #end
+
+              #if($origin.matches(".*")) #set($context.responseOverride.header.Access-Control-Allow-Origin
+              = $origin) #end'
+      ResourceId:
+        Ref: ApiGatewayResourceSavesurvey
+      RestApiId:
+        Ref: ApiGatewayRestApi
+  ApiGatewayMethodGetquestionsOptions:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: NONE
+      HttpMethod: OPTIONS
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Credentials: true
+          ResponseModels: {}
+      RequestParameters: {}
+      Integration:
+        Type: MOCK
+        RequestTemplates:
+          application/json: '{statusCode:200}'
+        ContentHandling: CONVERT_TO_TEXT
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: '''*'''
+              method.response.header.Access-Control-Allow-Headers: '''Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'''
+              method.response.header.Access-Control-Allow-Methods: '''OPTIONS,GET'''
+              method.response.header.Access-Control-Allow-Credentials: '''false'''
+            ResponseTemplates:
+              application/json: '#set($origin = $input.params("Origin"))
+
+              #if($origin == "") #set($origin = $input.params("origin")) #end
+
+              #if($origin.matches(".*")) #set($context.responseOverride.header.Access-Control-Allow-Origin
+              = $origin) #end'
+      ResourceId:
+        Ref: ApiGatewayResourceGetquestions
+      RestApiId:
+        Ref: ApiGatewayRestApi
+  ApiGatewayMethodSavesurveyPost:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      HttpMethod: POST
+      RequestParameters: {}
+      ResourceId:
+        Ref: ApiGatewayResourceSavesurvey
+      RestApiId:
+        Ref: ApiGatewayRestApi
+      ApiKeyRequired: false
+      AuthorizationType: NONE
+      Integration:
+        IntegrationHttpMethod: POST
+        Type: AWS_PROXY
+        Uri:
+          Fn::Join:
+            - ''
+            - - 'arn:'
+              - Ref: AWS::Partition
+              - ':apigateway:'
+              - Ref: AWS::Region
+              - :lambda:path/2015-03-31/functions/
+              - Fn::GetAtt:
+                  - SaveSurveyLambdaFunction
+                  - Arn
+              - /invocations
+      MethodResponses: []
+  ApiGatewayMethodGetquestionsGet:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      HttpMethod: GET
+      RequestParameters: {}
+      ResourceId:
+        Ref: ApiGatewayResourceGetquestions
+      RestApiId:
+        Ref: ApiGatewayRestApi
+      ApiKeyRequired: false
+      AuthorizationType: NONE
+      Integration:
+        IntegrationHttpMethod: POST
+        Type: AWS_PROXY
+        Uri:
+          Fn::Join:
+            - ''
+            - - 'arn:'
+              - Ref: AWS::Partition
+              - ':apigateway:'
+              - Ref: AWS::Region
+              - :lambda:path/2015-03-31/functions/
+              - Fn::GetAtt:
+                  - GetQuestionsLambdaFunction
+                  - Arn
+              - /invocations
+      MethodResponses: []
+  ApiGatewayMethodSavequestionsPost:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      HttpMethod: POST
+      RequestParameters: {}
+      ResourceId:
+        Ref: ApiGatewayResourceSavequestions
+      RestApiId:
+        Ref: ApiGatewayRestApi
+      ApiKeyRequired: false
+      AuthorizationType: AWS_IAM
+      Integration:
+        IntegrationHttpMethod: POST
+        Type: AWS_PROXY
+        Uri:
+          Fn::Join:
+            - ''
+            - - 'arn:'
+              - Ref: AWS::Partition
+              - ':apigateway:'
+              - Ref: AWS::Region
+              - :lambda:path/2015-03-31/functions/
+              - Fn::GetAtt:
+                  - SaveQuestionsLambdaFunction
+                  - Arn
+              - /invocations
+      MethodResponses: []
+  ApiGatewayMethodSaveanswertypesPost:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      HttpMethod: POST
+      RequestParameters: {}
+      ResourceId:
+        Ref: ApiGatewayResourceSaveanswertypes
+      RestApiId:
+        Ref: ApiGatewayRestApi
+      ApiKeyRequired: false
+      AuthorizationType: AWS_IAM
+      Integration:
+        IntegrationHttpMethod: POST
+        Type: AWS_PROXY
+        Uri:
+          Fn::Join:
+            - ''
+            - - 'arn:'
+              - Ref: AWS::Partition
+              - ':apigateway:'
+              - Ref: AWS::Region
+              - :lambda:path/2015-03-31/functions/
+              - Fn::GetAtt:
+                  - SaveAnswerTypesLambdaFunction
+                  - Arn
+              - /invocations
+      MethodResponses: []
+  ApiGatewayMethodSaveemailPost:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      HttpMethod: POST
+      RequestParameters: {}
+      ResourceId:
+        Ref: ApiGatewayResourceSaveemail
+      RestApiId:
+        Ref: ApiGatewayRestApi
+      ApiKeyRequired: false
+      AuthorizationType: AWS_IAM
+      Integration:
+        IntegrationHttpMethod: POST
+        Type: AWS_PROXY
+        Uri:
+          Fn::Join:
+            - ''
+            - - 'arn:'
+              - Ref: AWS::Partition
+              - ':apigateway:'
+              - Ref: AWS::Region
+              - :lambda:path/2015-03-31/functions/
+              - Fn::GetAtt:
+                  - SaveEmailLambdaFunction
+                  - Arn
+              - /invocations
+      MethodResponses: []
+  ApiGatewayDeployment:
+    Type: AWS::ApiGateway::Deployment
+    Properties:
+      RestApiId:
+        Ref: ApiGatewayRestApi
+      StageName:
+        Ref: Stage
+    DependsOn:
+      - ApiGatewayMethodSavesurveyOptions
+      - ApiGatewayMethodGetquestionsOptions
+      - ApiGatewayMethodSavesurveyPost
+      - ApiGatewayMethodGetquestionsGet
+      - ApiGatewayMethodSavequestionsPost
+      - ApiGatewayMethodSaveanswertypesPost
+      - ApiGatewayMethodSaveemailPost
+  SaveSurveyLambdaPermissionApiGateway:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName:
+        Fn::GetAtt:
+          - SaveSurveyLambdaFunction
+          - Arn
+      Action: lambda:InvokeFunction
+      Principal:
+        Fn::Join:
+          - ''
+          - - apigateway.
+            - Ref: AWS::URLSuffix
+      SourceArn:
+        Fn::Join:
+          - ''
+          - - 'arn:'
+            - Ref: AWS::Partition
+            - ':execute-api:'
+            - Ref: AWS::Region
+            - ':'
+            - Ref: AWS::AccountId
+            - ':'
+            - Ref: ApiGatewayRestApi
+            - /*/*
+  GetQuestionsLambdaPermissionApiGateway:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName:
+        Fn::GetAtt:
+          - GetQuestionsLambdaFunction
+          - Arn
+      Action: lambda:InvokeFunction
+      Principal:
+        Fn::Join:
+          - ''
+          - - apigateway.
+            - Ref: AWS::URLSuffix
+      SourceArn:
+        Fn::Join:
+          - ''
+          - - 'arn:'
+            - Ref: AWS::Partition
+            - ':execute-api:'
+            - Ref: AWS::Region
+            - ':'
+            - Ref: AWS::AccountId
+            - ':'
+            - Ref: ApiGatewayRestApi
+            - /*/*
+  SaveQuestionsLambdaPermissionApiGateway:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName:
+        Fn::GetAtt:
+          - SaveQuestionsLambdaFunction
+          - Arn
+      Action: lambda:InvokeFunction
+      Principal:
+        Fn::Join:
+          - ''
+          - - apigateway.
+            - Ref: AWS::URLSuffix
+      SourceArn:
+        Fn::Join:
+          - ''
+          - - 'arn:'
+            - Ref: AWS::Partition
+            - ':execute-api:'
+            - Ref: AWS::Region
+            - ':'
+            - Ref: AWS::AccountId
+            - ':'
+            - Ref: ApiGatewayRestApi
+            - /*/*
+  SaveAnswerTypesLambdaPermissionApiGateway:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName:
+        Fn::GetAtt:
+          - SaveAnswerTypesLambdaFunction
+          - Arn
+      Action: lambda:InvokeFunction
+      Principal:
+        Fn::Join:
+          - ''
+          - - apigateway.
+            - Ref: AWS::URLSuffix
+      SourceArn:
+        Fn::Join:
+          - ''
+          - - 'arn:'
+            - Ref: AWS::Partition
+            - ':execute-api:'
+            - Ref: AWS::Region
+            - ':'
+            - Ref: AWS::AccountId
+            - ':'
+            - Ref: ApiGatewayRestApi
+            - /*/*
+  SaveEmailLambdaPermissionApiGateway:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName:
+        Fn::GetAtt:
+          - SaveEmailLambdaFunction
+          - Arn
+      Action: lambda:InvokeFunction
+      Principal:
+        Fn::Join:
+          - ''
+          - - apigateway.
+            - Ref: AWS::URLSuffix
+      SourceArn:
+        Fn::Join:
+          - ''
+          - - 'arn:'
+            - Ref: AWS::Partition
+            - ':execute-api:'
+            - Ref: AWS::Region
+            - ':'
+            - Ref: AWS::AccountId
+            - ':'
+            - Ref: ApiGatewayRestApi
+            - /*/*
+  ApiGatewayExportRestApi:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name:
+        Ref: apiGatewayExportRestApiName
+      EndpointConfiguration:
+        Types:
+          - EDGE
+      BinaryMediaTypes:
+        - '*/*'
+  ApiGatewayResourceExportsurveys:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId:
+        Fn::GetAtt:
+          - ApiGatewayExportRestApi
+          - RootResourceId
+      PathPart: exportSurveys
+      RestApiId:
+        Ref: ApiGatewayExportRestApi
+  ApiGatewayMethodExportsurveysOptions:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: NONE
+      HttpMethod: OPTIONS
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Credentials: true
+          ResponseModels: {}
+      RequestParameters: {}
+      Integration:
+        Type: MOCK
+        RequestTemplates:
+          application/json: '{statusCode:200}'
+        ContentHandling: CONVERT_TO_TEXT
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: '''*'''
+              method.response.header.Access-Control-Allow-Headers: '''Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'''
+              method.response.header.Access-Control-Allow-Methods: '''OPTIONS,GET'''
+              method.response.header.Access-Control-Allow-Credentials: '''false'''
+            ResponseTemplates:
+              application/json: '#set($origin = $input.params("Origin"))
+
+              #if($origin == "") #set($origin = $input.params("origin")) #end
+
+              #if($origin.matches(".*")) #set($context.responseOverride.header.Access-Control-Allow-Origin
+              = $origin) #end'
+      ResourceId:
+        Ref: ApiGatewayResourceExportsurveys
+      RestApiId:
+        Ref: ApiGatewayExportRestApi
+  ApiGatewayMethodExportsurveysGet:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      HttpMethod: GET
+      RequestParameters: {}
+      ResourceId:
+        Ref: ApiGatewayResourceExportsurveys
+      RestApiId:
+        Ref: ApiGatewayExportRestApi
+      ApiKeyRequired: false
+      AuthorizationType: NONE
+      Integration:
+        IntegrationHttpMethod: POST
+        Type: AWS_PROXY
+        Uri:
+          Fn::Join:
+            - ''
+            - - 'arn:'
+              - Ref: AWS::Partition
+              - ':apigateway:'
+              - Ref: AWS::Region
+              - :lambda:path/2015-03-31/functions/
+              - Fn::GetAtt:
+                  - ExportSurveyLambdaFunction
+                  - Arn
+              - /invocations
+      MethodResponses: []
+  ApiGatewayDeployment1558951480416:
+    Type: AWS::ApiGateway::Deployment
+    Properties:
+      RestApiId:
+        Ref: ApiGatewayExportRestApi
+      StageName:
+        Ref: Stage
+    DependsOn:
+      - ApiGatewayMethodExportsurveysOptions
+      - ApiGatewayMethodExportsurveysGet
+  ExportSurveyLambdaPermissionApiGateway:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName:
+        Fn::GetAtt:
+          - ExportSurveyLambdaFunction
+          - Arn
+      Action: lambda:InvokeFunction
+      Principal:
+        Fn::Join:
+          - ''
+          - - apigateway.
+            - Ref: AWS::URLSuffix
+      SourceArn:
+        Fn::Join:
+          - ''
+          - - 'arn:'
+            - Ref: AWS::Partition
+            - ':execute-api:'
+            - Ref: AWS::Region
+            - ':'
+            - Ref: AWS::AccountId
+            - ':'
+            - Ref: ApiGatewayExportRestApi
+            - /*/*
+  surveyTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName:
+        Ref: surveyTableName
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+  questionTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName:
+        Ref: questionTableName
+      AttributeDefinitions:
+        - AttributeName: name
+          AttributeType: S
+        - AttributeName: ordinal
+          AttributeType: N
+      KeySchema:
+        - AttributeName: name
+          KeyType: HASH
+        - AttributeName: ordinal
+          KeyType: RANGE
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+  answerTypeTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName:
+        Ref: answerTypeTableName
+      AttributeDefinitions:
+        - AttributeName: type
+          AttributeType: S
+      KeySchema:
+        - AttributeName: type
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+  emailTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName:
+        Ref: emailTableName
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: N
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+  SurveyDomainName:
+    Type: AWS::ApiGateway::DomainName
+    Properties:
+      CertificateArn:
+        Ref: certificateArn
+      DomainName:
+        Ref: customDomain
+  SurveyMapping:
+    Type: AWS::ApiGateway::BasePathMapping
+    Properties:
+      BasePath: api
+      DomainName:
+        Ref: SurveyDomainName
+      RestApiId:
+        Ref: ApiGatewayRestApi
+      Stage:
+        Ref: Stage
+  SurveyExportMapping:
+    Type: AWS::ApiGateway::BasePathMapping
+    Properties:
+      BasePath: export
+      DomainName:
+        Ref: SurveyDomainName
+      RestApiId:
+        Ref: ApiGatewayExportRestApi
+      Stage:
+        Ref: Stage
+  SurveyDNSRecord:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneName:
+        Fn::Join:
+          - ''
+          - - Ref: domain
+            - .
+      Name:
+        Fn::Join:
+          - ''
+          - - Ref: customDomain
+            - .
+      Type: A
+      AliasTarget:
+        DNSName:
+          Fn::GetAtt:
+            - SurveyDomainName
+            - DistributionDomainName
+        HostedZoneId:
+          Fn::GetAtt:
+            - SurveyDomainName
+            - DistributionHostedZoneId
+Outputs:
+  ServerlessDeploymentBucketName:
+    Value:
+      Ref: ServerlessDeploymentBucket
+  SurveyEndpoint:
+    Description: URL of the service endpoint
+    Value:
+      Fn::Join:
+        - ''
+        - - https://
+          - Ref: ApiGatewayRestApi
+          - .execute-api.
+          - Ref: AWS::Region
+          - .
+          - Ref: AWS::URLSuffix
+          - /
+          - Ref: Stage
+  SurveyExportEndpoint:
+    Description: URL of the service endpoint
+    Value:
+      Fn::Join:
+        - ''
+        - - https://
+          - Ref: ApiGatewayExportRestApi
+          - .execute-api.
+          - Ref: AWS::Region
+          - .
+          - Ref: AWS::URLSuffix
+          - /
+          - Ref: Stage
+  DomainName:
+    Value:
+      Fn::GetAtt:
+        - SurveyDomainName
+        - DistributionDomainName
+  DistributionHostedZoneId:
+    Value:
+      Fn::GetAtt:
+        - SurveyDomainName
+        - DistributionHostedZoneId

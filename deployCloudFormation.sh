@@ -23,7 +23,7 @@ echo "Deploy 'feedback-survey'"
 echo "CloudFormation packaging..."
 aws cloudformation package \
     --region ${region} \
-    --template-file template.yml \
+    --template-file templateWithDynamicStage.yml \
     --output-template-file packaged-template.yml \
     --s3-bucket ${bucket} \
 
