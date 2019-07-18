@@ -13,7 +13,7 @@ The data will be stored in a DynamoDB, and the service will be deployed to AWS.
 
    Initialization of custom domain can take up to 40 minutes. Please wait before you go to step 3.
    
-3. In the file 'configuration.txt' enter parameters values. Run script 'initValues.sh'
+3. In the file 'initValues.sh' enter parameters values. Run script 'initValues.sh'
    ```
    ./initValues.sh
    ``` 
@@ -42,7 +42,7 @@ The data will be stored in a DynamoDB, and the service will be deployed to AWS.
    ./deployCloudFormation.sh
    ```
    Initialization of custom domain can take up to 40 minutes. Please wait before you go to step 3.
-3. Run script 'initValues.sh'
+3. In the file 'initValues.sh' enter parameters values. Run script 'initValues.sh'
    ```
    ./initValues.sh
    ```
@@ -74,7 +74,7 @@ The data will be stored in a DynamoDB, and the service will be deployed to AWS.
    ./deploy.sh
    ```
     Initialization of custom domain can take up to 40 minutes. Please wait before you go to step 3.
-3. Run script 'initValues.sh'
+3. In the file 'initValues.sh' enter parameters values. Run script 'initValues.sh'
    ```
    ./initValues.sh
    ```
