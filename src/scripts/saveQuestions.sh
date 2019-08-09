@@ -5,7 +5,7 @@ awsKey=$3
 echo "save questions"
 
 body="[       {
-                  \"ordinal\": 4,
+                  \"ordinal\": 1,
                   \"type\": \"radio\",
                   \"content\": \"What frequency of performance feedback are you providing?\",
                   \"required\": true,
@@ -13,7 +13,7 @@ body="[       {
                   \"answerType\": \"kindOfFeedback\"
                 },
                 {
-                  \"ordinal\": 5,
+                  \"ordinal\": 2,
                   \"type\": \"radio\",
                   \"content\": \"Would you like this feedback to be shared directly with the individual?\",
                   \"required\": true,
@@ -21,7 +21,7 @@ body="[       {
                   \"answerType\": \"yesNo\"
                 },
                 {
-                  \"ordinal\": 6,
+                  \"ordinal\": 3,
                   \"type\": \"radio\",
                   \"content\": \"Would you like to receive a copy of this feedback?\",
                   \"required\": true,
@@ -29,7 +29,7 @@ body="[       {
                   \"answerType\": \"yesNo\"
                 },
                 {
-                  \"ordinal\": 8,
+                  \"ordinal\": 4,
                   \"type\": \"rating\",
                   \"content\": \"How would you rate overall performance of this individual in their current role?\",
                   \"required\": true,
@@ -37,7 +37,7 @@ body="[       {
                   \"answerType\": \"rating\"
                 },
                 {
-                  \"ordinal\": 9,
+                  \"ordinal\": 5,
                   \"type\": \"rating\",
                   \"content\": \"Based on the role this individual is performing in your organisation, how satisfied are you that they are performing to the best of their abilities?\",
                   \"required\": true,
@@ -45,7 +45,7 @@ body="[       {
                   \"answerType\": \"rating\"
                 },
                 {
-                  \"ordinal\": 10,
+                  \"ordinal\": 6,
                   \"type\": \"rating\",
                   \"content\": \"How would you rate their contribution to your team, the company or to your customer?\",
                   \"required\": true,
@@ -53,7 +53,7 @@ body="[       {
                   \"answerType\": \"rating\"
                 },
                 {
-                  \"ordinal\": 11,
+                  \"ordinal\": 7,
                   \"type\": \"rating\",
                   \"content\": \"Given what you know of this person’s performance, how likely would you look to retain them longer term?\",
                   \"required\": true,
@@ -61,7 +61,7 @@ body="[       {
                   \"answerType\": \"rating\"
                 },
                 {
-                  \"ordinal\": 12,
+                  \"ordinal\": 8,
                   \"type\": \"open-ended\",
                   \"content\": \"Are there areas of improvement that you would recommend for this individual that would help them to accomplish work more effectively?\",
                   \"required\": false,
@@ -69,7 +69,7 @@ body="[       {
                   \"answerType\": null
                 },
                 {
-                  \"ordinal\": 13,
+                  \"ordinal\": 9,
                   \"type\": \"open-ended\",
                   \"content\": \"Please provide any information where an individual has gone above and beyond and you would like them to be recognized?\",
                   \"required\": false,
@@ -77,7 +77,7 @@ body="[       {
                   \"answerType\": null
                 },
                 {
-                  \"ordinal\": 14,
+                  \"ordinal\": 10,
                   \"type\": \"open-ended\",
                   \"content\": \"Any additional information you would like to provide\",
                   \"required\": false,

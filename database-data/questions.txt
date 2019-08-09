@@ -1,0 +1,88 @@
+{
+  "answerType": "kindOfFeedback",
+  "content": "What frequency of performance feedback are you providing?",
+  "name": "kind-of-feedback",
+  "ordinal": 1,
+  "required": 1,
+  "type": "radio"
+}
+
+{
+  "answerType": "yesNo",
+  "content": "Would you like this feedback to be shared directly with the individual?",
+  "name": "shared",
+  "ordinal": 2,
+  "required": 1,
+  "type": "radio"
+}
+
+{
+  "answerType": "yesNo",
+  "content": "Would you like to receive a copy of this feedback?",
+  "name": "receive-copy",
+  "ordinal": 3,
+  "required": 1,
+  "type": "radio"
+}
+
+{
+  "answerType": "rating",
+  "content": "How would you rate overall performance of this individual in their current role?",
+  "name": "overall-performance",
+  "ordinal": 4,
+  "required": 1,
+  "type": "rating"
+}
+
+{
+  "answerType": "rating",
+  "content": "Based on the role this individual is performing in your organisation, how satisfied are you that they are performing to the best of their abilities?",
+  "name": "satisfied",
+  "ordinal": 5,
+  "required": 1,
+  "type": "rating"
+}
+
+{
+  "answerType": "rating",
+  "content": "How would you rate their contribution to your team, the company or to your customer?",
+  "name": "contribution",
+  "ordinal": 6,
+  "required": 1,
+  "type": "rating"
+}
+
+
+{
+  "answerType": "rating",
+  "content": "Given what you know of this person’s performance, how likely would you look to retain them longer term?",
+  "name": "performance",
+  "ordinal": 7,
+  "required": 1,
+  "type": "rating"
+}
+
+
+{
+  "content": "Are there areas of improvement that you would recommend for this individual that would help them to accomplish work more effectively?",
+  "name": "areas-of-improvement",
+  "ordinal": 8,
+  "required": 0,
+  "type": "open-ended"
+}
+
+{
+  "content": "Please provide any information where an individual has gone above and beyond and you would like them to be recognized?",
+  "name": "go-above-and-beyond",
+  "ordinal": 9,
+  "required": 0,
+  "type": "open-ended"
+}
+
+{
+  "content": "Any additional information you would like to provide",
+  "name": "additional-information",
+  "ordinal": 10,
+  "required": 0,
+  "type": "open-ended"
+}
