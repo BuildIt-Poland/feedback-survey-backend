@@ -13,10 +13,12 @@ The data will be stored in a DynamoDB, and the service will be deployed to AWS.
 
    Initialization of custom domain can take up to 40 minutes. Please wait before you go to step 3.
    
-3. In the file 'initValues.sh' enter parameters values. Run script 'initValues.sh'
+3. In the file 'initValues.sh' enter parameters values. Run script 'initValues.sh' from project folder.
+You should ask your aws administrator to add aws policy: "AmazonAPIGatewayInvokeFullAccess" for your user (you don't need any other permissions to run the script).
    ```
    ./initValues.sh
    ``` 
+   (Alternative approach: In folder 'database-data' are files with data. You can add items manually in aws console).
 
 ## Verify mail on aws (sender and receiver)
 1. Enter the Amazon SES Console
