@@ -1,0 +1,26 @@
+{
+  "type": "kindOfFeedback",
+  "values": [
+    "monthly",
+    "quarterly",
+    "annual"
+  ]
+}
+
+{
+  "type": "rating",
+  "values": [
+    "Below expectations",
+    "Average",
+    "Good",
+    "Excellent"
+  ]
+}
+
+{
+  "type": "yesNo",
+  "values": [
+    "Yes",
+    "No"
+  ]
+}

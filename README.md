@@ -1,4 +1,98 @@
-#Pre-requisites
+# About
+The application automatically configures AWS and creates a database with initial values.
+It's a serverless application using AWS Lambda functions written in Java, API Gateway, Simple Email Service and S3, frontend based on react/grommet.
+The data will be stored in a DynamoDB, and the service will be deployed to AWS.
+
+![AWS diagram](documentation/aws-diagram.png?raw=true "AWS diagram")
+
+
+# Install using AWS console
+1. Create new bucket and upload feedback-survey-1.jar (you can find jar in folder 'output' or build yourself)
+
+2. Create new stack and upload template feedback-survey-template.yml (remember to edit parameters!)
+
+   Initialization of custom domain can take up to 40 minutes. Please wait before you go to step 3.
+   
+3. In the file 'initValues.sh' enter parameters values. Run script 'initValues.sh' from project folder.
+You should ask your aws administrator to add aws policy: "AmazonAPIGatewayInvokeFullAccess" for your user (you don't need any other permissions to run the script).
+   ```
+   ./initValues.sh
+   ``` 
+   (Alternative approach: In folder 'database-data' are files with data. You can add items manually in aws console).
+
+## Verify mail on aws (sender and receiver)
+1. Enter the Amazon SES Console
+2. Click Verify an Email Address
+3. You will receive a verification email
+
+[More about email verification, steps 1-2](https://aws.amazon.com/getting-started/tutorials/send-an-email/)
+
+
+------------------------------------------------------------------------------------------------------------------------
+
+# Install using AWS CLI
+## Requirements:
+1. jdk 8
+2. An AWS account
+3. AWS CLI
+4. Registered domain
+
+## Run:
+1. In the file 'configuration.txt' enter parameters values
+2. Run script 'deployCloudFormation.sh':
+   ```
+   ./deployCloudFormation.sh
+   ```
+   Initialization of custom domain can take up to 40 minutes. Please wait before you go to step 3.
+3. In the file 'initValues.sh' enter parameters values. Run script 'initValues.sh'
+   ```
+   ./initValues.sh
+   ```
+
+## Verify mail on aws (sender and receiver)
+1. Enter the Amazon SES Console
+2. Click Verify an Email Address
+3. You will receive a verification email
+
+[More about email verification, steps 1-2](https://aws.amazon.com/getting-started/tutorials/send-an-email/)
+
+------------------------------------------------------------------------------------------------------------------------
+
+# An Alternative installation, install using serverless 
+## Requirements:
+1. Install jdk 8
+2. Install node (v6.5.0 or later) and npm
+3. An AWS account
+4. Install the Serverless Framework installed with an AWS account set up
+   ```
+   npm install -g serverless
+   serverless config credentials --provider aws --key KEY --secret SECRET
+   ```
+
+## Run:
+1. In the file 'configuration.txt' enter parameters values
+2. Run file 'deploy.sh':
+   ```
+   ./deploy.sh
+   ```
+    Initialization of custom domain can take up to 40 minutes. Please wait before you go to step 3.
+3. In the file 'initValues.sh' enter parameters values. Run script 'initValues.sh'
+   ```
+   ./initValues.sh
+   ```
+
+## Verify mail on aws (sender and receiver)
+1. Enter the Amazon SES Console
+2. Click Verify an Email Address
+3. You will receive a verification email
+
+[More about email verification, steps 1-2](https://aws.amazon.com/getting-started/tutorials/send-an-email/)
+
+
+------------------------------------------------------------------------------------------------------------------------
+
+# Development 
+## Pre-requisites
 
 Serverless:
 1. Node.js v6.5.0 or later.
@@ -7,7 +101,7 @@ Serverless:
 4. Set-up your Provider Credentials -> [Watch the video on setting up credentials](https://www.youtube.com/watch?v=KngM5bfpttA)
 
 Other:
-1. Install jdk 8 and set JAVA_HOME path
+1. Install jdk 1.8 and set JAVA_HOME path
     ```
     export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_201.jdk/Contents/Home
     ```
@@ -17,29 +111,47 @@ Other:
     java --version
     ```
     
-2. Download maven 3.6.0 and set environment variables, [the instruction for mac](https://hathaway.cc/2008/06/how-to-edit-your-path-environment-variables-on-mac/)
+2. Plugin for binary files
     ```
-    export M2_HOME="/Library/Maven/apache-maven-3.6.0"
-    export PATH=${PATH}:${M2_HOME}/bin
+    npm install --save-dev serverless-apigw-binary
     ```
+    Source: https://github.com/maciejtreder/serverless-apigw-binary
     
-    Verify:
+3. Plugin for create domain
     ```
-    mvn --version
+    npm install serverless-domain-manager --save-dev
     ```
+    Source: https://github.com/amplify-education/serverless-domain-manager
     
-#Build and deploy
+## Build and deploy
 If you in the project directory
-1. Build project
+1. Create custom domain (domain is defined in serverless.yml):
     ```
-    mvn clean install
+    serverless create_domain
     ```
-2. Deploy the Service
+2. Build project:
+    ```
+    ./mvnw clean install
+    ```
+3. Deploy the Service 'feedback-survey':
     ```
     sls deploy
     ```
+4. Deploy Service 'feedback-survey-export'. The service is separate, because I defined other gateway API, which support binary files.
+    ```
+    cd export
+    sls deploy
+    ```
 
-#More information about Serverless:
+## AWS configuration 
+
+[Verify a New Email Address, steps 1-2](https://aws.amazon.com/getting-started/tutorials/send-an-email/)
+
+## More information about Serverless:
+
 https://serverless.com/framework/docs/providers/aws/guide/quick-start/
 
 https://serverless.com/blog/how-to-create-a-rest-api-in-java-using-dynamodb-and-serverless/
+
+## Instruction how to update the configuration in database
+/documentation/dynamoDB.docx

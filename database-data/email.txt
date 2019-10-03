@@ -1,0 +1,7 @@
+{
+  "bodyHtml": "<p>Hi!<br/>The client with ID: {client_id} just finished a survey about {employee_name}.<br/>Please find the attached results.</p><p>Cheers,<br/>SurveyBot</p>",
+  "id": 1,
+  "recipients": "recipient1@test.com,recipient2@test.com",
+  "sender": "sender@test.com",
+  "subject": "Feedback on {employee_name} from {client_id}"
+}

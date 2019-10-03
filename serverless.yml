@@ -1,93 +1,157 @@
 service: feedback-survey
 
+plugins:
+  - serverless-domain-manager
+
+custom:
+  surveyTableName: 'feedback_survey-${self:provider.stage}'
+  questionTableName: 'feedback_question-${self:provider.stage}'
+  answerTypeTableName: 'feedback_answer-type-${self:provider.stage}'
+  emailTableName: 'feedback_email-${self:provider.stage}'
+
+  customDomain:
+    domainName: ${opt:domain}
+    basePath: 'api'
+    stage: ${self:provider.stage}
+    createRoute53Record: true
+
 provider:
   name: aws
   runtime: java8
-  stage: dev
-  region: us-east-1
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, 'us-east-1'}
 
-# you can add statements to the Lambda function's IAM Role here
-#  iamRoleStatements:
-#    - Effect: "Allow"
-#      Action:
-#        - "s3:ListBucket"
-#      Resource: { "Fn::Join" : ["", ["arn:aws:s3:::", { "Ref" : "ServerlessDeploymentBucket" } ] ]  }
-#    - Effect: "Allow"
-#      Action:
-#        - "s3:PutObject"
-#      Resource:
-#        Fn::Join:
-#          - ""
-#          - - "arn:aws:s3:::"
-#            - "Ref" : "ServerlessDeploymentBucket"
-#            - "/*"
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource:
+        - { "Fn::GetAtt": ["surveyTable", "Arn"] }
+        - { "Fn::GetAtt": ["questionTable", "Arn"] }
+        - { "Fn::GetAtt": ["answerTypeTable", "Arn"] }
+        - { "Fn::GetAtt": ["emailTable", "Arn"] }
 
-# you can define service wide environment variables here
-#  environment:
-#    variable1: value1
+    - Effect: "Allow"
+      Action:
+        - "ses:SendEmail"
+        - "ses:SendRawEmail"
+      Resource: "*"
 
-# you can add packaging information here
+  environment:
+    SURVEY_TABLE_NAME: ${self:custom.surveyTableName}
+    QUESTION_TABLE_NAME: ${self:custom.questionTableName}
+    ANSWER_TYPE_TABLE_NAME: ${self:custom.answerTypeTableName}
+    EMAIL_TABLE_NAME: ${self:custom.emailTableName}
+
+
 package:
-  artifact: target/feedback-survey-SNAPSHOT-1.jar
+  artifact: target/feedback-survey-1.jar
 
 functions:
-  hello:
-    handler: com.buildit.serverless.Handler
-    events:
-      - http:
-          path: /hello
-          method: get
-
   saveSurvey:
     handler: com.buildit.survey.SaveSurveyHandler
+    timeout: 30
     events:
       - http:
           path: /saveSurvey
           method: post
+          cors: true
 
+  getQuestions:
+    handler: com.buildit.question.GetQuestionsHandler
+    events:
+      - http:
+          path: /getQuestions
+          method: get
+          cors: true
 
-#    The following are a few example events you can configure
-#    NOTE: Please make sure to change your handler code to work with those events
-#    Check the event documentation for details
-#    events:
-#      - http:
-#          path: users/create
-#          method: get
-#      - websocket: $connect
-#      - s3: ${env:BUCKET}
-#      - schedule: rate(10 minutes)
-#      - sns: greeter-topic
-#      - stream: arn:aws:dynamodb:region:XXXXXX:table/foo/stream/1970-01-01T00:00:00.000
-#      - alexaSkill: amzn1.ask.skill.xx-xx-xx-xx
-#      - alexaSmartHome: amzn1.ask.skill.xx-xx-xx-xx
-#      - iot:
-#          sql: "SELECT * FROM 'some_topic'"
-#      - cloudwatchEvent:
-#          event:
-#            source:
-#              - "aws.ec2"
-#            detail-type:
-#              - "EC2 Instance State-change Notification"
-#            detail:
-#              state:
-#                - pending
-#      - cloudwatchLog: '/aws/lambda/hello'
-#      - cognitoUserPool:
-#          pool: MyUserPool
-#          trigger: PreSignUp
+  saveQuestions:
+    handler: com.buildit.question.SaveQuestionsHandler
+    events:
+      - http:
+          path: /saveQuestions
+          method: post
+          authorizer: aws_iam
 
-#    Define function environment variables here
-#    environment:
-#      variable2: value2
+  saveAnswerTypes:
+    handler: com.buildit.question.SaveAnswerTypesHandler
+    events:
+      - http:
+          path: /saveAnswerTypes
+          method: post
+          authorizer: aws_iam
 
-# you can add CloudFormation resource templates here
-#resources:
-#  Resources:
-#    NewResource:
-#      Type: AWS::S3::Bucket
-#      Properties:
-#        BucketName: my-new-bucket
-#  Outputs:
-#     NewOutput:
-#       Description: "Description for the output"
-#       Value: "Some output value"
+  saveEmail:
+    handler: com.buildit.email.SaveEmailHandler
+    events:
+      - http:
+          path: /saveEmail
+          method: post
+          authorizer: aws_iam
+
+resources:
+  Resources:
+    surveyTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.surveyTableName}
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+
+    questionTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.questionTableName}
+        AttributeDefinitions:
+          - AttributeName: name
+            AttributeType: S
+          - AttributeName: ordinal
+            AttributeType: N
+        KeySchema:
+          - AttributeName: name
+            KeyType: HASH
+          - AttributeName: ordinal
+            KeyType: RANGE
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+
+    answerTypeTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.answerTypeTableName}
+        AttributeDefinitions:
+          - AttributeName: type
+            AttributeType: S
+        KeySchema:
+          - AttributeName: type
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+
+    emailTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.emailTableName}
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: N
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
