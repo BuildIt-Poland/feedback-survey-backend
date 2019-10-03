@@ -27,9 +27,6 @@ Parameters:
   certificateArn:
     Type: String
     Default:
-  bucketName:
-    Type: String
-    Default: feedback-survey-serverlessdeploymentbucket-prod
   saveSurveyFunctionName:
     Type: String
     Default: feedback-survey-prod-saveSurvey
@@ -64,15 +61,6 @@ Parameters:
     Type: String
     Default: feedback-survey-1.jar
 Resources:
-  ServerlessDeploymentBucket:
-    Type: AWS::S3::Bucket
-    Properties:
-      BucketName:
-        Ref: bucketName
-      BucketEncryption:
-        ServerSideEncryptionConfiguration:
-          - ServerSideEncryptionByDefault:
-              SSEAlgorithm: AES256
   SaveSurveyLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
@@ -1002,9 +990,6 @@ Resources:
             - SurveyDomainName
             - DistributionHostedZoneId
 Outputs:
-  ServerlessDeploymentBucketName:
-    Value:
-      Ref: ServerlessDeploymentBucket
   SurveyEndpoint:
     Description: URL of the service endpoint
     Value:
